@@ -47,6 +47,9 @@
 
 (add-hook 'find-file-hook 'my-find-file-check-make-large-file-read-only-hook)
 
+(use-package magit
+  :ensure t
+  :bind ("C-x g" . magit-status))
 ;; ;; Compilation
 ;; (global-set-key (kbd "<f5>") (lambda ()
 ;;                                (interactive)

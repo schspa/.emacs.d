@@ -54,6 +54,8 @@
   (require 'exec-path-from-shell)
   (exec-path-from-shell-initialize))
 
+;; Map Alt key to Meta
+(setq x-alt-keysym 'meta)
                                         ; (require 'use-package)
 (package-initialize)
 
@@ -117,7 +119,7 @@
  '(moo-do-includes t)
  '(package-selected-packages
    (quote
-	(lsp-imenu eglot ccls lsp-java lsp-clangd lsp-common lsp-python pyls lsp-ui company-lsp elogcat hs-minor-mode pyenv-mode-auto solarized-theme ace-window which-key realgud company-anaconda android-mode anaconda-mode company-c-headers dashboard dracula-theme flycheck validate moody minions powerline nyx-theme nyan-mode markdown-preview-eww markdown-preview-mode markdown-mode+ markdown-mode gh-md aggressive-indent smartparens helm-tramp highlight magit function-args monokai-theme zygospore helm-gtags helm yasnippet ws-butler volatile-highlights use-package undo-tree iedit dtrt-indent counsel-projectile company clean-aindent-mode anzu)))
+	(helm-rg lsp-imenu eglot ccls lsp-java lsp-clangd lsp-common lsp-python pyls lsp-ui company-lsp elogcat hs-minor-mode pyenv-mode-auto solarized-theme ace-window which-key realgud company-anaconda android-mode anaconda-mode company-c-headers dashboard dracula-theme flycheck validate moody minions powerline nyx-theme nyan-mode markdown-preview-eww markdown-preview-mode markdown-mode+ markdown-mode gh-md aggressive-indent smartparens helm-tramp highlight magit function-args monokai-theme zygospore helm-gtags helm yasnippet ws-butler volatile-highlights use-package undo-tree iedit dtrt-indent counsel-projectile company clean-aindent-mode anzu)))
  '(size-indication-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
