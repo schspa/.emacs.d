@@ -69,6 +69,9 @@
  gdb-show-main t
  )
 
+(setq select-enable-primary t)
+(setq select-enable-clipboard t)
+
 ;; company
 (use-package company
   :init
