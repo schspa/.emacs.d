@@ -1,5 +1,3 @@
-
-
 (when (>= emacs-major-version 24)
   (require 'package)
   (package-initialize)
@@ -103,27 +101,7 @@
 (require 'setup-bugreport)
 (require 'setup-elisp)
 
+(setq custom-file "~/.emacs-custom.el")
+(load custom-file)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(company-anaconda-case-insensitive nil)
- '(custom-safe-themes
-   (quote
-	("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "aaffceb9b0f539b6ad6becb8e96a04f2140c8faa1de8039a343a4f1e009174fb" "3cd4f09a44fe31e6dd65af9eb1f10dc00d5c2f1db31a427713a1784d7db7fdfc" "84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "bd7b7c5df1174796deefce5debc2d976b264585d51852c962362be83932873d9" default)))
- '(gud-gdb-command-name "aarch64-none-elf-gdb -i=mi")
- '(helm-mode t)
- '(moo-do-includes t)
- '(package-selected-packages
-   (quote
-	(helm-rg lsp-imenu eglot ccls lsp-java lsp-clangd lsp-common lsp-python pyls lsp-ui company-lsp elogcat hs-minor-mode pyenv-mode-auto solarized-theme ace-window which-key realgud company-anaconda android-mode anaconda-mode company-c-headers dashboard dracula-theme flycheck validate moody minions powerline nyx-theme nyan-mode markdown-preview-eww markdown-preview-mode markdown-mode+ markdown-mode gh-md aggressive-indent smartparens helm-tramp highlight magit function-args monokai-theme zygospore helm-gtags helm yasnippet ws-butler volatile-highlights use-package undo-tree iedit dtrt-indent counsel-projectile company clean-aindent-mode anzu)))
- '(size-indication-mode t))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
