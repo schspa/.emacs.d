@@ -27,6 +27,9 @@
 (toggle-truncate-lines t)
 (global-set-key (kbd "C-=") 'er/expand-region)
 
+;; add english helper
+(require 'company-english-helper)
+
 ;; show unncessary whitespace that can mess up your diff
 (add-hook 'prog-mode-hook
           (lambda () (interactive)
