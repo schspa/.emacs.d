@@ -24,7 +24,8 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(toggle-truncate-lines t)
+(setq-default truncate-lines t)
+(setq-default global-visual-line-mode t)
 
 (use-package expand-region
   :ensure t
