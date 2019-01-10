@@ -61,7 +61,7 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-(setq use-package-always-ensure t)
+(setq-default use-package-always-ensure t)
 
 (add-to-list 'load-path "~/.emacs.d/custom")
 

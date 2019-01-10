@@ -32,11 +32,64 @@
 
 ;; add english helper
 (require 'company-english-helper)
+(use-package youdao-dictionary
+  :ensure t)
 
 ;; show unncessary whitespace that can mess up your diff
 (add-hook 'prog-mode-hook
           (lambda () (interactive)
             (setq show-trailing-whitespace 1)))
+
+;; auto adjust font according to screen dpi
+;; frome https://emacs.stackexchange.com/questions/28390/quickly-adjusting-text-to-dpi-changes
+(defun my-dpi ()
+  (let* ((attrs (car (display-monitor-attributes-list)))
+         (size (assoc 'mm-size attrs))
+         (sizex (cadr size))
+         (res (cdr (assoc 'geometry attrs)))
+         (resx (- (caddr res) (car res)))
+         dpi)
+    (catch 'exit
+      ;; in terminal
+      (unless sizex
+        (throw 'exit 10))
+      ;; on big screen
+      (when (> sizex 1000)
+        (throw 'exit 10))
+      ;; DPI
+      (* (/ (float resx) sizex) 25.4))))
+
+(defun my-preferred-font-size ()
+  (let ( (dpi (my-dpi)) )
+    (cond
+     ((< dpi 110) 10)
+     ((< dpi 130) 11)
+     ((< dpi 160) 12)
+     (t 12))))
+
+(defvar my-preferred-font-size (my-preferred-font-size))
+
+(defvar my-regular-font
+  (cond
+   ((eq window-system 'x) (format "DejaVu Sans Mono-%d:weight=normal" my-preferred-font-size))
+   ((eq window-system 'w32) (format "Courier New-%d:antialias=none" my-preferred-font-size))))
+(defvar my-symbol-font
+  (cond
+   ((eq window-system 'x) (format "DejaVu Sans Mono-%d:weight=normal" my-preferred-font-size))
+   ((eq window-system 'w32) (format "DejaVu Sans Mono-%d:antialias=none" my-preferred-font-size))))
+
+(cond
+ ((eq window-system 'x)
+  (if (and (fboundp 'find-font) (find-font (font-spec :name my-regular-font)))
+      (set-frame-font my-regular-font)
+    (set-frame-font "DejaVu Sans Mono")))
+ ((eq window-system 'w32)
+  (set-frame-font my-regular-font)
+  (set-fontset-font nil 'cyrillic my-regular-font)
+  (set-fontset-font nil 'greek my-regular-font)
+  (set-fontset-font nil 'phonetic my-regular-font)
+  (set-fontset-font nil 'symbol my-symbol-font)))
+
 
 ;; use space to indent by default
 (setq-default indent-tabs-mode nil)
@@ -60,6 +113,22 @@
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit-status))
+
+;;export http_proxy="http://127.0.0.1:12333"
+;;export https_proxy="http://127.0.0.1:12333"
+
+(defun toggle-env-http-proxy ()
+  "set/unset the environment variable http_proxy which w3m uses"
+  (interactive)
+  (let ((proxy "http://127.0.0.1:12333"))
+    (if (string= (getenv "http_proxy") proxy)
+        ;; clear the proxy
+        (progn
+          (setenv "http_proxy" "")
+          (message "env http_proxy is empty now"))
+      ;; set the proxy
+      (setenv "http_proxy" proxy)
+      (message "env http_proxy is %s now" proxy))))
 
 (use-package w3m
   :ensure t)
