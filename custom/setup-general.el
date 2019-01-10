@@ -25,7 +25,10 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (toggle-truncate-lines t)
-(global-set-key (kbd "C-=") 'er/expand-region)
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . 'er/expand-region))
 
 ;; add english helper
 (require 'company-english-helper)
@@ -57,6 +60,9 @@
 (use-package magit
   :ensure t
   :bind ("C-x g" . magit-status))
+
+(use-package w3m
+  :ensure t)
 ;; ;; Compilation
 ;; (global-set-key (kbd "<f5>") (lambda ()
 ;;                                (interactive)
