@@ -71,6 +71,7 @@
   (setq lsp-auto-guess-root t)    ; 我習慣自動選project root
   ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
   :config
+  (require 'ccls)
   (require 'lsp-clients)          ; ocaml,css,python,bash,...
   )
 
@@ -81,9 +82,11 @@
 (use-package lsp-mode
   :commands lsp
   :hook ((c-mode c++-mode objc-mode) . lsp))
-(add-hook 'python-mode-hook #'lsp)
 
+;;pip install python-language-server
+(add-hook 'python-mode-hook #'lsp)
 (use-package company-lsp
+  :ensure t
   :config
   ;; 设置 company-lsp 为后端
   (push 'company-lsp company-backends))
