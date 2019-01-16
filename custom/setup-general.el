@@ -36,6 +36,41 @@
 (use-package youdao-dictionary
   :ensure t)
 
+(use-package yasnippet
+  :ensure t
+  :init
+  (yas-global-mode 1)
+  :config
+  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets")))
+
+(autoload 'yas-expand-snippet "yasnippet")
+(defun autoinsert-yas-expand()
+  "Replace text in yasnippet template."
+  (yas-expand-snippet (buffer-string) (point-min) (point-max)))
+
+(use-package autoinsert
+  :ensure t
+  :init
+  ;; Don't want to be prompted before insertion:
+  (setq auto-insert-query nil)
+
+  (setq auto-insert-directory (locate-user-emacs-file "auto-insert"))
+  (add-hook 'find-file-hook 'auto-insert)
+  (auto-insert-mode 1)
+
+  :config
+  (define-auto-insert "\\.el$" ["el-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.erl$" ["erl-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.hrl$" ["hrl-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.c$"  ["c-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.cpp$" ["c++-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.cc$" ["c++-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.cs$" ["csharp-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.org$" ["org-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.tex$" ["tex-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.py$" ["py-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.go$" ["go-auto-insert" autoinsert-yas-expand]))
+
 ;; show unncessary whitespace that can mess up your diff
 (add-hook 'prog-mode-hook
           (lambda () (interactive)
