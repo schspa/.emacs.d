@@ -132,10 +132,6 @@
 
 ;; set appearance of a tab that is represented by 4 spaces
 (setq-default tab-width 4)
-(use-package auto-indent-mode
-  :ensure t
-  :config
-  (auto-indent-global-mode))
 (setq jit-lock-defer-time 0.05)
 (defun my-find-file-check-make-large-file-read-only-hook ()
   "If a file is over a given size, make the buffer read only."
@@ -190,7 +186,10 @@
 (use-package company
   :init
   (global-company-mode 1)
-  (delete 'company-semantic company-backends))
+  (delete 'company-semantic company-backends)
+  :config
+  (setq-default company-dabbrev-ignore-case nil))
+
 
 ;; Package: projejctile
 (use-package projectile
