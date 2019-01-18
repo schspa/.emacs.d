@@ -16,11 +16,13 @@
 ;; general setup, theme, global operations etc.
 
 (setq make-backup-files nil)
+(setq auto-save-default nil)
+(setq create-lockfiles nil)
+(setq backup-directory-alist (quote (("." . "~/.backups"))))
 
 (setq gc-cons-threshold 100000000)
 (setq inhibit-startup-message t)
 
-(setq backup-directory-alist (quote (("." . "~/.backups"))))
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
