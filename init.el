@@ -65,30 +65,36 @@
 
 (add-to-list 'load-path "~/.emacs.d/custom")
 
+(require 'use-package)
+
+(use-package ccls
+  :ensure t)
+(use-package lsp-java
+  :ensure t)
+
 (use-package lsp-mode
   :commands lsp
   :init
   (setq lsp-auto-guess-root t)    ; 我習慣自動選project root
+  (setq lsp-enable-indentation nil)
   ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
   :config
   (require 'ccls)
   (require 'lsp-clients)          ; ocaml,css,python,bash,...
+  (require 'lsp-java)
+  :hook ((c-mode c++-mode objc-mode python-mode java-mode) . (lambda () (lsp)))
   )
 
-(use-package lsp-java
-  :hook (java-mode . (lambda () (require 'lsp-java) (lsp))))
-(use-package ccls
-  :hook ((c-mode c++-mode objc-mode) . (lambda () (require 'ccls) (lsp))))
-(use-package lsp-mode
-  :commands lsp
-  :hook ((c-mode c++-mode objc-mode) . lsp))
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :ensure t
+  :config
+  :hook (lsp-mode . lsp-ui-mode))
 
 ;;pip install python-language-server
-(add-hook 'python-mode-hook #'lsp)
 (use-package company-lsp
   :ensure t
   :config
-  ;; 设置 company-lsp 为后端
   (push 'company-lsp company-backends))
 
 (require 'setup-general)
