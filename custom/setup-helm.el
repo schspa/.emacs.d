@@ -132,6 +132,13 @@
       (setq helm-swoop-speed-or-color t))
 
     (helm-mode 1)
+    ;; Package: projejctile
+    (use-package projectile
+      :init
+      (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+      :config
+      (projectile-mode t)
+      (setq projectile-enable-caching t))
 
     (use-package helm-projectile
       :init

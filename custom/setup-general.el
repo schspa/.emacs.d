@@ -190,13 +190,6 @@
   :config
   (setq-default company-dabbrev-ignore-case nil))
 
-
-;; Package: projejctile
-(use-package projectile
-  :init
-  (projectile-mode t)
-  (setq projectile-enable-caching t))
-
 ;; Package zygospore
 (use-package zygospore
   :bind (("C-x 1" . zygospore-toggle-delete-other-windows)
