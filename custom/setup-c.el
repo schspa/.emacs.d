@@ -19,10 +19,8 @@
 ;; “user”: When you want to define your own style
 ;;(setq 'c-default-style "linux") ;; set style to "linux"
 
-(setq c-default-style "linux"
-      c-basic-offset 4)
+(setq-default c-default-style "java")
 (setq-default indent-tabs-mode t)
-
 
 (use-package cc-mode
   :init
@@ -36,6 +34,6 @@
 			(hs-minor-mode t)
 			(helm-gtags-mode t)
             (set (make-local-variable 'company-backends)
-                 '((company-c-headers company-gtags company-clang company-keywords company-dabbrev)))))
+                 '((company-lsp company-c-headers company-keywords company-dabbrev)))))
 
 (provide 'setup-c)
