@@ -92,6 +92,7 @@
   (push 'company-lsp company-backends))
 
 (require 'setup-general)
+(require 'setup-abbrev)
 (if (version< emacs-version "24.4")
     (require 'setup-ivy-counsel)
   (require 'setup-helm)
