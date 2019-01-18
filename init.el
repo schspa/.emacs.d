@@ -86,15 +86,15 @@
   )
 
 (use-package lsp-ui
+  :commands lsp-ui-mode
   :ensure t
   :config
-  :hook ((lsp-mode) . lsp-ui))
+  :hook (lsp-mode . lsp-ui-mode))
 
 ;;pip install python-language-server
 (use-package company-lsp
   :ensure t
   :config
-  ;; 设置 company-lsp 为后端
   (push 'company-lsp company-backends))
 
 (require 'setup-general)
