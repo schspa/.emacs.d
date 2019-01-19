@@ -1,4 +1,3 @@
-
 ;;; setup-general.el --- Initialization file for Emacs
 
 ;;; Commentary: Emacs Startup File --- initialization for Emacs
@@ -219,9 +218,8 @@
 (use-package dashboard
   :ensure t
   :config
-  (add-hook 'after-init-hook
-            '(lambda ()
-               (dashboard-setup-startup-hook))))
+  (dashboard-setup-startup-hook)
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))))
 
 (set-face-attribute 'default nil :height 120)
 (when (memq window-system '(mac ns))
@@ -341,10 +339,7 @@
                (intern mode)))
     ))
 
-(use-package ace-window
-  :ensure t
-  :init
-  (global-set-key (kbd "M-o") 'ace-window))
+(global-set-key [remap other-window] 'ace-window)
 
 (use-package popwin
   :ensure t
