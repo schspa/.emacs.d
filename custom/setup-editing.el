@@ -17,6 +17,11 @@
 (delete-selection-mode)
 (global-set-key (kbd "RET") 'newline-and-indent)
 
+(use-package browse-kill-ring
+  :ensure t
+  :config
+  (global-set-key (kbd "C-c k") 'browse-kill-ring))
+
 ;; GROUP: Editing -> Killing
 (setq kill-ring-max 5000 ; increase kill-ring capacity
       kill-whole-line t  ; if NIL, kill whole line and move the next line up
