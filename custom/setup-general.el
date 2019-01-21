@@ -248,13 +248,17 @@
   :ensure t
   :init)
 
+(when (>= emacs-major-version 26)
+  (global-display-line-numbers-mode t))
+
 (add-hook 'prog-mode-hook
           '(lambda ()
              (smartparens-mode t)
              (define-key global-map (kbd "M-r") 'helm-gtags-find-rtag)
              (define-key global-map (kbd "M-t") 'helm-dwim-target)
              (define-key global-map (kbd "M-i") 'helm-imenu)
-             (linum-mode t)
+             (when (< emacs-major-version 26)
+               (line-number-mode))
              (show-paren-mode t)))
 
 ;; function-args
