@@ -138,7 +138,9 @@
   (when (> (buffer-size) (* 5 1024 1024))
     (setq buffer-read-only t)
     (buffer-disable-undo)
-    (fundamental-mode)))
+    (fundamental-mode)
+    (local-set-key (kbd "C-s") 'counsel-grep-or-swiper)
+    (local-set-key (kbd "C-r") 'counsel-grep-or-swiper)))
 
 (add-hook 'find-file-hook 'my-find-file-check-make-large-file-read-only-hook)
 
