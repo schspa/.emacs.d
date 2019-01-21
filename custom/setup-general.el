@@ -279,19 +279,12 @@
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   (global-flycheck-mode t))
 
-(use-package minions
-  :ensure t
-  :init (minions-mode)
-  :config
-  (setq
-   minions-mode-line-lighter "#"
-   minions-direct '(flycheck-mode)))
+(use-package all-the-icons
+  :ensure t)
 
-(use-package moody
+(use-package doom-modeline
   :ensure t
-  :config
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode))
+  :hook (after-init . doom-modeline-mode))
 
 ;; (add-hook 'after-init-hook #'global-flycheck-mode)
 (menu-bar-mode 0)
