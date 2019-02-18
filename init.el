@@ -47,15 +47,15 @@
     (when (not (package-installed-p pkg))
 	  (package-install pkg))))
 
-;; Find Executable Path on OS X
-(when (featurep 'cocoa)
-  (require 'exec-path-from-shell)
-  (exec-path-from-shell-initialize))
-
 ;; Map Alt key to Meta
 (setq x-alt-keysym 'meta)
                                         ; (require 'use-package)
 (package-initialize)
+
+;; Find Executable Path on OS X
+(when (featurep 'cocoa)
+  (require 'exec-path-from-shell)
+  (exec-path-from-shell-initialize))
 
 
 (unless (package-installed-p 'use-package)
