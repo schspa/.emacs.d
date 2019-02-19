@@ -14,6 +14,10 @@
   (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
   (add-hook 'python-mode-hook 'pyenv-mode))
 
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)))
+
 (use-package pyenv-mode-auto
   :ensure t)
 ;; (add-hook 'python-mode-hook
