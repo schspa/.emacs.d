@@ -1,0 +1,3 @@
+[submodule "git/emacs-maple-preview"]
+	path = git/emacs-maple-preview
+	url = https://github.com/honmaple/emacs-maple-preview.git

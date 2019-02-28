@@ -98,6 +98,7 @@
   (push 'company-lsp company-backends))
 
 (require 'setup-general)
+(require 'setup-md)
 (require 'setup-windows)
 (require 'setup-abbrev)
 (if (version< emacs-version "24.4")
