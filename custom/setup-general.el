@@ -226,7 +226,7 @@
 (when (memq window-system '(mac ns))
   (set-face-attribute 'default nil :height 140))
 
-(setq org-agenda-files '("~/Dropbox/org"))
+(if (file-directory-p "~/Dropbox/org") (setq org-agenda-files '("~/Dropbox/org")))
 
 (define-key global-map (kbd "C-c t") 'helm-tramp)
 
