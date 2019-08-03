@@ -1,3 +1,55 @@
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . 'er/expand-region))
+
+;; add english helper
+(require 'company-english-helper)
+(use-package youdao-dictionary
+  :ensure t)
+
+(use-package pyim
+  :ensure t
+  :config
+  (require 'pyim-basedict)
+  (pyim-basedict-enable)
+  (setq default-input-method "pyim"))
+
+(use-package yasnippet
+  :ensure t
+  :init
+  (yas-global-mode 1)
+  :config
+  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets")))
+
+(autoload 'yas-expand-snippet "yasnippet")
+(defun autoinsert-yas-expand()
+  "Replace text in yasnippet template."
+  (yas-expand-snippet (buffer-string) (point-min) (point-max)))
+
+(use-package autoinsert
+  :ensure t
+  :init
+  ;; Don't want to be prompted before insertion:
+  (setq auto-insert-query nil)
+
+  (setq auto-insert-directory (locate-user-emacs-file "auto-insert"))
+  (add-hook 'find-file-hook 'auto-insert)
+  (auto-insert-mode 1)
+
+  :config
+  (define-auto-insert "\\.el$" ["el-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.erl$" ["erl-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.hrl$" ["hrl-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.c$"  ["c-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.cpp$" ["c++-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.cc$" ["c++-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.cs$" ["csharp-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.org$" ["org-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.tex$" ["tex-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.py$" ["py-auto-insert" autoinsert-yas-expand])
+  (define-auto-insert "\\.go$" ["go-auto-insert" autoinsert-yas-expand]))
+
 ;; GROUP: Editing -> Editing Basics
 (setq global-mark-ring-max 5000         ; increase mark ring to contains 5000 entries
       mark-ring-max 5000                ; increase kill ring to contains 5000 entries
@@ -260,5 +312,16 @@ Position the cursor at it's beginning, according to the current mode."
 
 (global-set-key (kbd "M-o") 'prelude-smart-open-line)
 (global-set-key (kbd "M-o") 'open-line)
+
+(setq select-enable-primary nil)
+(setq select-enable-clipboard nil)
+
+;; company
+(use-package company
+  :init
+  (global-company-mode 1)
+  (delete 'company-semantic company-backends)
+  :config
+  (setq-default company-dabbrev-ignore-case nil))
 
 (provide 'setup-editing)

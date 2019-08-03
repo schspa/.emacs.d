@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+;; switch windows with shift + direction key
+(windmove-default-keybindings)
+
 (use-package hydra
   :ensure t)
 

@@ -67,53 +67,25 @@
 
 (require 'use-package)
 
-(use-package ccls
-  :ensure t)
-(use-package lsp-java
-  :ensure t)
-
-(use-package lsp-mode
-  :commands lsp
-  :init
-  (setq lsp-auto-guess-root t)    ; 我習慣自動選project root
-  (setq lsp-enable-indentation nil)
-  ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
-  :config
-  (require 'ccls)
-  (require 'lsp-clients)          ; ocaml,css,python,bash,...
-  (require 'lsp-java)
-  :hook ((c-mode c++-mode objc-mode python-mode java-mode) . (lambda () (lsp)))
-  )
-
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :ensure t
-  :config
-  :hook (lsp-mode . lsp-ui-mode))
-
-;;pip install python-language-server
-(use-package company-lsp
-  :ensure t
-  :config
-  (push 'company-lsp company-backends))
-
+(require 'init-const)
+(require 'setup-ui)
+(require 'setup-modeline)
+(require 'setup-helm)
 (require 'setup-general)
+
+(require 'setup-prog)
 (require 'setup-md)
 (require 'setup-windows)
 (require 'setup-abbrev)
-(if (version< emacs-version "24.4")
-    (require 'setup-ivy-counsel)
-  (require 'setup-helm)
-  (require 'setup-helm-gtags))
-;; (require 'setup-ggtags)
+(require 'setup-helm-gtags)
 (require 'setup-cedet)
 (require 'setup-editing)
+(require 'setup-lsp)
 (require 'setup-c)
 (require 'setup-python)
 (require 'setup-bugreport)
 (require 'setup-elisp)
+(require 'setup-eaf)
 
-(setq custom-file "~/.emacs-custom.el")
-(load custom-file)
-
-
+(let ((custom-file "~/.emacs-custom.el"))
+  (if (file-exists-p custom-file) (load custom-file)))
