@@ -119,7 +119,7 @@
   :config
   (dashboard-setup-startup-hook)
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-  (setq dashboard-items '((recents . 5)
+  (setq dashboard-items '((recents . 10)
 						  (projects . 5)
 						  (bookmarks . 5)
 						  (agenda . 5)
