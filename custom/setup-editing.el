@@ -3,6 +3,8 @@
   :ensure t
   :bind ("C-=" . 'er/expand-region))
 
+(eval-after-load 'rst' (define-key rst-mode-map (kbd "C-=") nil))
+
 ;; add english helper
 (require 'company-english-helper)
 (use-package youdao-dictionary
