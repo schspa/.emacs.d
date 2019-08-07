@@ -27,6 +27,9 @@
 (use-package simple-httpd
   :ensure t)
 
+(use-package websocket
+  :ensure t)
+
 (use-package maple-preview
   :load-path "~/.emacs.d/git/emacs-maple-preview"
   :ensure nil
