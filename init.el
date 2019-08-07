@@ -87,5 +87,5 @@
 (require 'setup-elisp)
 (require 'setup-eaf)
 
-(let ((custom-file "~/.emacs-custom.el"))
-  (if (file-exists-p custom-file) (load custom-file)))
+(setq custom-file "~/.emacs-custom.el")
+(if (file-exists-p custom-file) (load custom-file))
