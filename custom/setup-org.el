@@ -25,8 +25,42 @@
 ;;; Code:
 
 (defun schspa/org-confirm-babel-evaluate (lang body)
-  (not (or (string= lang "latex") (string= lang "dot"))))
+  (not (or (string= lang "latex") (string= lang "dot") (string= lang "mermaid"))))
 (setq org-confirm-babel-evaluate 'schspa/org-confirm-babel-evaluate)
+
+;; from https://emacs.stackexchange.com/questions/12841/quickly-insert-source-blocks-in-org-mode
+(defvar org-sai-src-default "C++"
+  "This is the list used to store the default label for source code section.")
+
+(defun org-insert-src-block ()
+  "Insert the source code section in `org-mode'."
+  (interactive)
+  (let* ((src-code-types
+          '("emacs-lisp" "python" "C" "sh" "java" "js" "clojure" "C++" "css"
+            "calc" "asymptote" "dot" "gnuplot" "ledger" "lilypond" "mscgen"
+            "octave" "oz" "plantuml" "R" "sass" "screen" "sql" "awk" "ditaa"
+            "haskell" "latex" "lisp" "matlab" "ocaml" "org" "perl" "ruby"
+            "scheme" "sqlite"))
+         (src-prompt-str
+          (concat "Source code type (default "
+                  org-sai-src-default
+                  "): "))
+         (temp-src-code-types
+          (cons org-sai-src-default src-code-types))
+         (src-type-str
+          (completing-read src-prompt-str temp-src-code-types
+                           nil nil nil nil org-sai-src-default)))
+    (setq org-sai-src-default src-type-str))
+  (insert (format "#+BEGIN_SRC %s\n" src-type-str))
+  (newline)
+  (org-indent-line)
+  (insert "#+END_SRC\n")
+  (forward-line -2))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            ;; keybinding for inserting code blocks
+            (local-set-key (kbd "C-c s") 'org-insert-src-block)))
 
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 (org-babel-do-load-languages
@@ -35,7 +69,10 @@
    (emacs-lisp . t)
    (latex . t)
    (shell . t)
+   (mermaid . t)
+   (plantuml . t)
    ))
+(require 'graphviz-dot-mode)
 
 (provide 'setup-org)
 

@@ -86,6 +86,7 @@
 (require 'setup-bugreport)
 (require 'setup-elisp)
 (require 'setup-eaf)
+(require 'setup-org)
 
 (setq custom-file "~/.emacs-custom.el")
 (if (file-exists-p custom-file) (load custom-file))
