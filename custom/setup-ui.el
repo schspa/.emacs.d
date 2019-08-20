@@ -76,12 +76,6 @@
      ((< dpi 160) 12)
      (t 12))))
 
-;; Chinese Font
-(dolist (charset '(kana han symbol cjk-misc bopomofo))
-  (set-fontset-font (frame-parameter nil 'font)
-                    charset
-                    (font-spec :family "WenQuanYi Zen Hei Mono" :size 14)))
-
 ;; Fonts
 (when (display-graphic-p)
   ;; Set default font
