@@ -61,6 +61,7 @@
 
 (if (file-directory-p "~/Dropbox/org") (setq org-agenda-files '("~/Dropbox/org")))
 
+(global-set-key (kbd "C-c a") 'org-agenda)
 (define-key global-map (kbd "C-c t") 'helm-tramp)
 
 (use-package sr-speedbar
