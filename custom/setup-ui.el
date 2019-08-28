@@ -71,9 +71,9 @@
 (defun my-preferred-font-size ()
   (let ( (dpi (my-dpi)) )
     (cond
-     ((< dpi 110) 10)
-     ((< dpi 130) 11)
-     ((< dpi 160) 12)
+     ((< dpi 110) 12)
+     ((< dpi 130) 14)
+     ((< dpi 160) 16)
      (t 12))))
 
 ;; Fonts
