@@ -25,13 +25,13 @@
 ;;; Code:
 
 (defun schspa/org-confirm-babel-evaluate (lang body)
-  (not (or (string= lang "latex") (string= lang "dot") (string= lang "mermaid"))))
+  (not (or (string= lang "latex") (string= lang "dot") (string= lang "mermaid") (string= lang "ditaa") (string= lang "drawio"))))
 (setq org-confirm-babel-evaluate 'schspa/org-confirm-babel-evaluate)
 
 ;; from https://emacs.stackexchange.com/questions/12841/quickly-insert-source-blocks-in-org-mode
 (defvar org-sai-src-default "C++"
   "This is the list used to store the default label for source code section.")
-
+(setq org-image-actual-width '(600))
 (defun org-insert-src-block ()
   "Insert the source code section in `org-mode'."
   (interactive)
@@ -71,9 +71,11 @@
    (shell . t)
    (mermaid . t)
    (plantuml . t)
+   (ditaa . t)
+   (drawio . t)
    ))
 (require 'graphviz-dot-mode)
-
+(require 'ob-drawio)
 (provide 'setup-org)
 
 ;; Local Variables:
