@@ -16,7 +16,7 @@
 (add-hook 'c++-mode-hook 'alexott/cedet-hook)
 
 ;; Enable EDE only in C/C++
-(require 'ede)
-(global-ede-mode)
+;;(require 'ede)
+;;(global-ede-mode)
 
 (provide 'setup-cedet)
