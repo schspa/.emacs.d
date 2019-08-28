@@ -60,6 +60,15 @@
        (add-to-list 'w3m-search-engine-alist '("j" "http://www.google.com.au/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=%s+site:developer.mozilla.org" utf-8))
        )))
 
+(use-package 'helm-chrome)
+
+(use-package edit-server
+  :ensure t
+  :config
+  (when (require 'edit-server nil t)
+    (setq edit-server-new-frame nil)
+    (edit-server-start)))
+
 (provide 'setup-net)
 
 ;; Local Variables:
