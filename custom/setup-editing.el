@@ -1,4 +1,11 @@
 
+;; Take the coding system setup before pyim setup.
+;; set-language-environment utf-8 will set default input method to rfc1345
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-language-environment "UTF-8")
+(prefer-coding-system 'utf-8)
+
 (use-package expand-region
   :ensure t
   :bind ("C-=" . 'er/expand-region))
@@ -12,10 +19,29 @@
 
 (use-package pyim
   :ensure t
+  :demand t
+  :init
   :config
-  (require 'pyim-basedict)
-  (pyim-basedict-enable)
-  (setq default-input-method "pyim"))
+  (use-package quelpa
+    :ensure t)
+  (quelpa '(pyim-greatdict :fetcher github :repo "tumashu/pyim-greatdict"))
+  (require 'pyim-greatdict)
+  (pyim-greatdict-enable)
+  (message "pyim setup")
+  (setq default-input-method "pyim")
+  (setq pyim-default-scheme 'quanpin)
+
+  (setq-default pyim-english-input-switch-functions
+                '(pyim-probe-isearch-mode
+                  pyim-probe-program-mode
+                  pyim-probe-org-structure-template))
+  (pyim-isearch-mode 1)
+
+  (setq pyim-page-tooltip 'posframe)
+  (setq pyim-page-length 5)
+  :bind
+  (("M-j" . pyim-convert-string-at-point)
+   ("C-;" . pyim-delete-word-from-personal-buffer)))
 
 (use-package yasnippet
   :ensure t
@@ -62,10 +88,6 @@
 (add-hook 'sh-mode-hook (lambda ()
                           (setq tab-width 4)))
 
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-language-environment "UTF-8")
-(prefer-coding-system 'utf-8)
 
 (setq-default indent-tabs-mode nil)
 (delete-selection-mode)
