@@ -25,7 +25,8 @@
 ;;; Code:
 (menu-bar-mode 0)
 (tool-bar-mode 0)
-(scroll-bar-mode 0)
+
+(if window-system (scroll-bar-mode 0))
 (global-visual-line-mode t)
 (global-hl-line-mode t)
 
@@ -100,13 +101,23 @@
         (set-fontset-font t '(#x4e00 . #x9fff) font)
         (throw 'loop t)))))
 
-(use-package dracula-theme
-  :ensure t
-  :config
-  :init
-  (add-hook 'after-init-hook
-			'(lambda ()
-			   (load-theme 'dracula t))))
+(if (display-graphic-p)
+    (use-package dracula-theme
+      :ensure t
+      :config
+      :init
+      (add-hook 'after-init-hook
+                '(lambda ()
+                   (load-theme 'dracula t))))
+  (use-package ample-theme
+    :ensure t
+    :init
+    (progn (load-theme 'ample t t)
+           (load-theme 'ample-flat t t)
+           (load-theme 'ample-light t t)
+           (enable-theme 'ample-flat))
+    :defer t
+    :ensure t))
 
 (use-package dashboard
   :ensure t
