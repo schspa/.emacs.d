@@ -62,19 +62,23 @@
             ;; keybinding for inserting code blocks
             (local-set-key (kbd "C-c s") 'org-insert-src-block)))
 
-(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+(use-package graphviz-dot-mode
+  :ensure t
+  :config
+  (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)))
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((dot . t)
    (emacs-lisp . t)
    (latex . t)
    (shell . t)
-   (mermaid . t)
+   ;;(mermaid . t)
    (plantuml . t)
    (ditaa . t)
    (drawio . t)
    ))
-(require 'graphviz-dot-mode)
+
 (require 'ob-drawio)
 (provide 'setup-org)
 
