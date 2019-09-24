@@ -23,6 +23,9 @@
   :init
   :config
   (use-package quelpa
+    :init
+    (setq quelpa-upgrade-p nil)
+    (setq quelpa-update-melpa-p nil)
     :ensure t)
   (quelpa '(pyim-greatdict :fetcher github :repo "tumashu/pyim-greatdict"))
   (require 'pyim-greatdict)
