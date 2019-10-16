@@ -17,29 +17,47 @@
 (use-package youdao-dictionary
   :ensure t)
 
+;; pyim-setup group
+(defcustom schspa/pyim-use-rime nil
+  "Use rime for pyim"
+  :group 'pyim)
+
 (use-package pyim
   :ensure t
   :demand t
   :init
   :config
-  (use-package quelpa
-    :init
-    (setq quelpa-upgrade-p nil)
-    (setq quelpa-update-melpa-p nil)
-    :ensure t)
-  (quelpa '(pyim-greatdict :fetcher github :repo "tumashu/pyim-greatdict"))
-  (require 'pyim-greatdict)
-  (pyim-greatdict-enable)
+
+  (if schspa/pyim-use-rime
+      (progn
+        ;; setup rime
+        ;; refs to https://manateelazycat.github.io/emacs/2019/09/12/make-rime-works-with-linux.html
+        (setq load-path (cons (file-truename "~/src/liberime/build/") load-path))
+        (require 'liberime)
+        (liberime-start "/usr/share/rime-data/" (file-truename "~/.emacs.d/pyim/rime/"))
+        (liberime-select-schema "luna_pinyin_simp")
+        (setq pyim-default-scheme 'rime-quanpin))
+    (progn
+      (use-package quelpa
+        :init
+        (setq quelpa-upgrade-p nil)
+        (setq quelpa-update-melpa-p nil)
+        :ensure t)
+      (quelpa '(pyim-greatdict :fetcher github :repo "tumashu/pyim-greatdict"))
+      (require 'pyim-greatdict)
+      (pyim-greatdict-enable)
+      (setq pyim-default-scheme 'quanpin)))
+
+
   (message "pyim setup")
   (setq default-input-method "pyim")
-  (setq pyim-default-scheme 'quanpin)
 
   (setq-default pyim-english-input-switch-functions
                 '(pyim-probe-isearch-mode
                   pyim-probe-program-mode
-                  pyim-probe-org-structure-template))
+                  pyim-probe-org-structure-template
+                  minibufferp))
   (pyim-isearch-mode 1)
-
   (setq pyim-page-tooltip 'posframe)
   (setq pyim-page-length 5)
   :bind
@@ -341,7 +359,7 @@ Position the cursor at it's beginning, according to the current mode."
 (global-set-key (kbd "M-o") 'open-line)
 
 (setq select-enable-primary nil)
-(setq select-enable-clipboard t)
+(setq select-enable-clipboard nil)
 
 ;; company
 (use-package company
