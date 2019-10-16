@@ -25,7 +25,10 @@
 ;;; Code:
 
 (defun schspa/org-confirm-babel-evaluate (lang body)
-  (not (or (string= lang "latex") (string= lang "dot") (string= lang "mermaid") (string= lang "ditaa") (string= lang "drawio"))))
+  ;; org babel evaluate whitelist
+  (let* ((whitelist-languages '("latex" "dot" "mermaid" "ditaa" "drawio" "plantuml")))
+	(not (member lang whitelist-languages))))
+
 (setq org-confirm-babel-evaluate 'schspa/org-confirm-babel-evaluate)
 
 ;; from https://emacs.stackexchange.com/questions/12841/quickly-insert-source-blocks-in-org-mode

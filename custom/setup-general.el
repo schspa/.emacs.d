@@ -59,7 +59,7 @@
 
 (require 'recentf)
 (recentf-mode t)
-(setq-default recentf-max-menu-item 20)
+(setq-default recentf-max-menu-item 200)
 
 (if (file-directory-p "~/Dropbox/org") (setq org-agenda-files '("~/Dropbox/org")))
 
