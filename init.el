@@ -87,6 +87,8 @@
 (require 'setup-elisp)
 (require 'setup-eaf)
 (require 'setup-org)
+(require 'setup-pdf)
+(require 'setup-wsl)
 
 (setq custom-file "~/.emacs-custom.el")
 (if (file-exists-p custom-file) (load custom-file))
