@@ -27,6 +27,8 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+;; dired 自动刷新
+(setq dired-auto-revert-buffer t)
 
 ;; use space to indent by default
 (setq-default indent-tabs-mode nil)

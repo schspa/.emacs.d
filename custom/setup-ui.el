@@ -101,23 +101,31 @@
         (set-fontset-font t '(#x4e00 . #x9fff) font)
         (throw 'loop t)))))
 
-(if (display-graphic-p)
-    (use-package dracula-theme
-      :ensure t
-      :config
-      :init
-      (add-hook 'after-init-hook
-                '(lambda ()
-                   (load-theme 'dracula t))))
-  (use-package ample-theme
-    :ensure t
-    :init
-    (progn (load-theme 'ample t t)
-           (load-theme 'ample-flat t t)
-           (load-theme 'ample-light t t)
-           (enable-theme 'ample-flat))
-    :defer t
-    :ensure t))
+(use-package dracula-theme
+  :ensure t)
+
+(use-package ample-theme
+  :ensure t
+  :init
+  (progn (load-theme 'ample t t)
+         (load-theme 'ample-flat t t)
+         (load-theme 'ample-light t t))
+  :defer t
+  :ensure t)
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (select-frame frame)
+                (if (display-graphic-p frame)
+                    (progn
+                      (load-theme 'dracula t)
+                      (enable-theme 'dracula)))))
+  (if (display-graphic-p)
+      (enable-theme 'dracula)
+    (enable-theme 'ample-flat)))
+
+
 
 (use-package dashboard
   :ensure t
