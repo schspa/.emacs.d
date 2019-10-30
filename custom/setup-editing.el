@@ -359,7 +359,7 @@ Position the cursor at it's beginning, according to the current mode."
 (global-set-key (kbd "M-o") 'open-line)
 
 (setq select-enable-primary nil)
-(setq select-enable-clipboard nil)
+(setq select-enable-clipboard t)
 
 ;; company
 (use-package company
