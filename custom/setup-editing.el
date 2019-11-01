@@ -15,7 +15,15 @@
 ;; add english helper
 (require 'company-english-helper)
 (use-package youdao-dictionary
-  :ensure t)
+  :ensure t
+  :init
+  (define-prefix-command 'youdao-prefix-map)
+  (global-set-key (kbd "C-c y") 'youdao-prefix-map)
+  :config
+  :bind
+  (("C-c y s" . youdao-dictionary-search-at-point-tooltip)
+   ("C-c y S" . youdao-dictionary-search-at-point)
+   ("C-c y p" . youdao-dictionary-play-voice-at-point)))
 
 ;; pyim-setup group
 (defcustom schspa/pyim-use-rime nil
