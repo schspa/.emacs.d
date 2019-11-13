@@ -1,7 +1,6 @@
 ;;; `(buffer-name)` --- ${1:Description}
 
 ;; Author: `user-full-name`  `user-mail-address`
-;; Keywords: ${2:elisp}
 ;; URL:
 
 ;; Copyright (C) `(format-time-string "%Y")`, `user-full-name`, all rights reserved.
@@ -23,9 +22,6 @@
 ;;
 
 ;;; Code:
-
-$0
-(provide '`(substring (buffer-name) 0  (- (length (buffer-name)) 3))`)
 
 ;; Local Variables:
 ;; coding: utf-8
