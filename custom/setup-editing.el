@@ -30,32 +30,37 @@
   "Use rime for pyim"
   :group 'pyim)
 
+(defcustom schspa/pyim-use-greatdict nil
+  "Use rime for pyim"
+  :group 'pyim)
+
 (use-package pyim
   :ensure t
   :demand t
   :init
   :config
 
-  (if schspa/pyim-use-rime
-      (progn
-        ;; setup rime
-        ;; refs to https://manateelazycat.github.io/emacs/2019/09/12/make-rime-works-with-linux.html
-        (setq load-path (cons (file-truename "~/src/liberime/build/") load-path))
-        (require 'liberime)
-        (liberime-start "/usr/share/rime-data/" (file-truename "~/.emacs.d/pyim/rime/"))
-        (liberime-select-schema "luna_pinyin_simp")
-        (setq pyim-default-scheme 'rime-quanpin))
-    (progn
-      (use-package quelpa
-        :init
-        (setq quelpa-upgrade-p nil)
-        (setq quelpa-update-melpa-p nil)
-        :ensure t)
-      (quelpa '(pyim-greatdict :fetcher github :repo "tumashu/pyim-greatdict"))
-      (require 'pyim-greatdict)
-      (pyim-greatdict-enable)
-      (setq pyim-default-scheme 'quanpin)))
-
+  (cond (schspa/pyim-use-rime
+         (progn
+           ;; setup rime
+           ;; refs to https://manateelazycat.github.io/emacs/2019/09/12/make-rime-works-with-linux.html
+           (setq load-path (cons (file-truename "~/src/liberime/build/") load-path))
+           (require 'liberime)
+           (liberime-start "/usr/share/rime-data/" (file-truename "~/.emacs.d/pyim/rime/"))
+           (liberime-select-schema "luna_pinyin_simp")
+           (setq pyim-default-scheme 'rime-quanpin)))
+        (schspa/pyim-use-greatdict
+         (progn
+           (use-package quelpa
+             :init
+             (setq quelpa-upgrade-p nil)
+             (setq quelpa-update-melpa-p nil)
+             :ensure t)
+           (quelpa '(pyim-greatdict :fetcher github :repo "tumashu/pyim-greatdict"))
+           (require 'pyim-greatdict)
+           (pyim-greatdict-enable)
+           (setq pyim-default-scheme 'quanpin)))
+        (t (setq pyim-default-scheme 'quanpin)))
 
   (message "pyim setup")
   (setq default-input-method "pyim")
