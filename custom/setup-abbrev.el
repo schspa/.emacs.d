@@ -35,7 +35,6 @@
     ("atm" "at the moment" )
     ("dfb" "difference between" )
     ("ty" "thank you" )
-    ("ui" "user interface" )
     ("uns" "understand" )
     ("ur" "you are" )
     ("btw" "by the way" )
