@@ -26,6 +26,8 @@
 
 (use-package doom-modeline
   :ensure t
+  :config
+  (setq doom-modeline-project-detection 'ffip)
   :hook (after-init . doom-modeline-mode))
 
 (provide 'setup-modeline)
