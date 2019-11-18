@@ -34,6 +34,7 @@
   :init
   (setq lsp-auto-guess-root t)    ; 我習慣自動選project root
   (setq lsp-enable-indentation nil)
+  (setq lsp-enable-file-watchers nil)
   ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
   :config
   (require 'ccls)
