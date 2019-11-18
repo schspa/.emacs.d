@@ -29,6 +29,9 @@
 (use-package lsp-java
   :ensure t)
 
+(use-package lsp-python-ms
+  :ensure t)
+
 (use-package lsp-mode
   :commands lsp
   :init
@@ -40,6 +43,7 @@
   (require 'ccls)
   (require 'lsp-clients)          ; ocaml,css,python,bash,...
   (require 'lsp-java)
+  (require 'lsp-python-ms)
   :hook
   (hack-local-variables . (lambda ()
                             (when (derived-mode-p
