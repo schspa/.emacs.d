@@ -39,8 +39,16 @@
   (require 'ccls)
   (require 'lsp-clients)          ; ocaml,css,python,bash,...
   (require 'lsp-java)
-  :hook ((c-mode c++-mode objc-mode python-mode java-mode) . (lambda () (lsp)))
-  )
+  :hook
+  (hack-local-variables . (lambda ()
+                            (when (derived-mode-p
+                                   'c-mode
+                                   'c++-mode
+                                   'objc-mode
+                                   'python-mode
+                                   'java-mode)
+                              (lsp)))))
+
 
 (use-package lsp-ui
   :commands lsp-ui-mode
