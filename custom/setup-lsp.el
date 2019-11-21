@@ -25,7 +25,23 @@
 ;;; Code:
 
 (use-package ccls
-  :ensure t)
+  :ensure t
+  :config
+  ;; https://github.com/maskray/ccls/blob/master/src/config.h
+  (setq
+   ccls-initialization-options
+   `(:clang
+     (:excludeArgs
+      ;; Linux's gcc options. See ccls/wiki
+      ["--param=allow-store-data-races=0" "-W*" "-f*" "-m*"]
+      :extraArgs ["--gcc-toolchain=/usr"])
+     :completion
+     (:include
+      (:blacklist
+       ["^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
+        "^/usr/(local/)?include/c\\+\\+/v1/"
+        ]))))
+  )
 (use-package lsp-java
   :ensure t)
 
