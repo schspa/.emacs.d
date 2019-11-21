@@ -56,21 +56,22 @@
   (setq lsp-enable-file-watchers nil)
   ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
   :config
-  (require 'ccls)
   (require 'lsp-clients)          ; ocaml,css,python,bash,...
-  (require 'lsp-java)
-  (require 'lsp-python-ms)
   :hook
   (hack-local-variables . (lambda ()
-                            (when (derived-mode-p
-                                   'c-mode
-                                   'c++-mode
-                                   'objc-mode
-                                   'python-mode
-                                   'java-mode)
-                              (lsp)))))
-
-
+							(cond ((derived-mode-p 'c-mode 'c++-mode 'objc-mode)
+								   (progn
+									 (require 'ccls)
+									 (lsp)))
+								  ((derived-mode-p 'python-mode)
+								   (progn
+									 (require 'lsp-python-ms)
+									 (lsp)))
+								  ((derived-mode-p 'java-mode)
+								   (progn
+									 (require 'lsp-java)
+									 (lsp)))
+								  ))))
 (use-package lsp-ui
   :commands lsp-ui-mode
   :ensure t
