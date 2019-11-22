@@ -70,6 +70,12 @@
   :config
   (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)))
 
+(use-package plantuml-mode
+  :ensure t
+  :config
+  (setq org-plantuml-jar-path
+		(expand-file-name "bin/plantuml.jar" user-emacs-directory)))
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((dot . t)
