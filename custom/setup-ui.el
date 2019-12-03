@@ -49,33 +49,32 @@
   :config
   (popwin-mode 1))
 
-
 ;; auto adjust font according to screen dpi
 ;; frome https://emacs.stackexchange.com/questions/28390/quickly-adjusting-text-to-dpi-changes
 (defun my-dpi ()
   (let* ((attrs (car (display-monitor-attributes-list)))
-         (size (assoc 'mm-size attrs))
-         (sizex (cadr size))
-         (res (cdr (assoc 'geometry attrs)))
-         (resx (car (nthcdr 2 res)))
+         (res (assoc 'mm-size attrs))
+         (resx (cadr res))
+         (size (cdr (assoc 'geometry attrs)))
+         (sizex (car (nthcdr 2 size)))
          dpi)
     (catch 'exit
       ;; in terminal
-      (unless sizex
+      (unless resx
         (throw 'exit 10))
       ;; on big screen
-      (when (> sizex 1000)
-        (throw 'exit 10))
+      (when (> resx 1000)
+        (throw 'exit 18))
       ;; DPI
-      (* (/ (float resx) sizex) 25.4))))
+      (/ (float sizex) resx))))
+
+(defcustom schspa/font-size 4.5
+  "font-size in mm."
+  :group 'schspa
+  :type 'float)
 
 (defun my-preferred-font-size ()
-  (let ( (dpi (my-dpi)) )
-    (cond
-     ((< dpi 110) 12)
-     ((< dpi 130) 14)
-     ((< dpi 160) 16)
-     (t 12))))
+  (truncate (* schspa/font-size (my-dpi))))
 
 ;; Fonts
 (when (display-graphic-p)
