@@ -57,7 +57,7 @@
          (size (assoc 'mm-size attrs))
          (sizex (cadr size))
          (res (cdr (assoc 'geometry attrs)))
-         (resx (- (caddr res) (car res)))
+         (resx (car (nthcdr 2 res)))
          dpi)
     (catch 'exit
       ;; in terminal
