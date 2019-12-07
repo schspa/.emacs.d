@@ -73,6 +73,9 @@ There are two things you can do about this warning:
   (package-install 'use-package))
 (setq-default use-package-always-ensure t)
 
+(setq custom-file "~/.emacs-custom.el")
+(if (file-exists-p custom-file) (load custom-file))
+
 (add-to-list 'load-path "~/.emacs.d/custom")
 
 (require 'use-package)
@@ -100,5 +103,3 @@ There are two things you can do about this warning:
 (require 'setup-pdf)
 (require 'setup-wsl)
 
-(setq custom-file "~/.emacs-custom.el")
-(if (file-exists-p custom-file) (load custom-file))
