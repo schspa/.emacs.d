@@ -76,29 +76,30 @@
 (defun my-preferred-font-size ()
   (truncate (* schspa/font-size (my-dpi))))
 
-;; Fonts
-(when (display-graphic-p)
-  ;; Set default font
-  (catch 'loop
-    (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Monaco" "SF Mono" "Hack" "Source Code Pro" "Fira Code"
-                    "Menlo" "DejaVu Sans Mono" "Consolas"))
-      (when (member font (font-family-list))
-        (set-face-attribute 'default nil :font font :height (* (my-preferred-font-size) 10))
-        (throw 'loop t))))
+(defun setup-font ()
+  ;; Fonts
+  (when (display-graphic-p)
+    ;; Set default font
+    (catch 'loop
+      (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Monaco" "SF Mono" "Hack" "Source Code Pro" "Fira Code"
+                      "Menlo" "DejaVu Sans Mono" "Consolas"))
+        (when (member font (font-family-list))
+          (set-face-attribute 'default nil :font font :height (* (my-preferred-font-size) 10))
+          (throw 'loop t))))
 
-  ;; Specify font for all unicode characters
-  (catch 'loop
-    (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Symbola" "Apple Symbols" "Symbol"))
-      (when (member font (font-family-list))
-        (set-fontset-font t 'unicode font nil 'prepend)
-        (throw 'loop t))))
+    ;; Specify font for all unicode characters
+    (catch 'loop
+      (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Symbola" "Apple Symbols" "Symbol"))
+        (when (member font (font-family-list))
+          (set-fontset-font t 'unicode font nil 'prepend)
+          (throw 'loop t))))
 
-  ;; Specify font for Chinese characters
-  (catch 'loop
-    (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Noto Sans Mono" "WenQuanYi Micro Hei" "Microsoft Yahei"))
-      (when (member font (font-family-list))
-        (set-fontset-font t '(#x4e00 . #x9fff) font)
-        (throw 'loop t)))))
+    ;; Specify font for Chinese characters
+    (catch 'loop
+      (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Noto Sans Mono" "WenQuanYi Micro Hei" "Microsoft Yahei"))
+        (when (member font (font-family-list))
+          (set-fontset-font t '(#x4e00 . #x9fff) font)
+          (throw 'loop t))))))
 
 (use-package dracula-theme
   :ensure t)
@@ -119,9 +120,12 @@
                 (if (display-graphic-p frame)
                     (progn
                       (load-theme 'dracula t)
-                      (enable-theme 'dracula)))))
+                      (enable-theme 'dracula)
+                      (setup-font)))))
   (if (display-graphic-p)
-      (enable-theme 'dracula)
+      (progn
+        (enable-theme 'dracula)
+        (setup-font))
     (enable-theme 'ample-flat)))
 
 (use-package dashboard
