@@ -102,4 +102,5 @@ There are two things you can do about this warning:
 (require 'setup-org)
 (require 'setup-pdf)
 (require 'setup-wsl)
+(require 'setup-blog)
 
