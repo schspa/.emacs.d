@@ -33,7 +33,9 @@
   (replace-regexp-in-string "BLOG_PUBLISH_URL" "" from t))
 
 (use-package org-static-blog
+  :load-path (lambda () (expand-file-name "git/org-static-blog" user-emacs-directory))
   :ensure t)
+
 (setq org-static-blog-publish-title "schspa's Blog")
 (setq org-static-blog-publish-url (blog/fix-publish-url "BLOG_PUBLISH_URL/"))
 (setq org-static-blog-publish-directory "~/sites/")
@@ -45,6 +47,15 @@
 (setq org-export-with-toc nil)
 (setq org-export-with-section-numbers nil)
 
+(dolist (directory
+		 (list
+		  org-static-blog-publish-directory
+		  org-static-blog-posts-directory
+		  org-static-blog-drafts-directory))
+  (if (not (file-directory-p directory))
+	  (progn
+		(message "Create %S for org-static-blog" directory)
+		(make-directory directory))))
 ;; This header is inserted into the <head> section of every page:
 ;;   (you will need to create the style sheet at
 ;;    ~/projects/blog/static/style.css
