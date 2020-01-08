@@ -4,3 +4,6 @@
 [submodule "git/eaf"]
 	path = git/eaf
 	url = https://github.com/manateelazycat/emacs-application-framework.git
+[submodule "git/org-static-blog"]
+	path = git/org-static-blog
+	url = git@github.com:schspa/org-static-blog.git
