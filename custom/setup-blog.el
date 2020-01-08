@@ -65,7 +65,6 @@
 	  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-postamble.html" user-emacs-directory))))
 
 (require 'org-static-blog)
-;; Local Variables:
 
 (defun org-static-blog-generate-post-path (post-filename post-datetime)
   (concat (format-time-string "%Y/%m/%d" post-datetime)
