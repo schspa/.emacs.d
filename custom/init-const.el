@@ -54,6 +54,10 @@
   (eq system-type 'cygwin)
   "Are we running on a Cygwin system?")
 
+(defconst sys/wslp
+  (not (eq (getenv "WSL_DISTRO_NAME") nil))
+  "Are we running on a WSL system?")
+
 (defconst sys/rootp
   (string-equal "root" (getenv "USER"))
   "Are you using ROOT user?")
