@@ -68,19 +68,22 @@
 ;;    ~/projects/blog/static/style.css
 ;;    and the favicon at
 ;;    ~/projects/blog/static/favicon.ico)
-(setq org-static-blog-page-header
-	  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-header.html" user-emacs-directory))))
+(defun org-static-blog-page-header ()
+  "This header is inserted into the <head> section of every page"
+  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-header.html" user-emacs-directory))))
 
 ;; This preamble is inserted at the beginning of the <body> of every page:
 ;;   This particular HTML creates a <div> with a simple linked headline
-(setq org-static-blog-page-preamble
-	  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-preamble.html" user-emacs-directory))))
+(defun org-static-blog-page-preamble ()
+  "This preamble is inserted at the beginning of the <body> of every page"
+  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-preamble.html" user-emacs-directory))))
 
 ;; This postamble is inserted at the end of the <body> of every page:
 ;;   This particular HTML creates a <div> with a link to the archive page
 ;;   and a licensing stub.
-(setq org-static-blog-page-postamble
-	  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-postamble.html" user-emacs-directory))))
+(defun org-static-blog-page-postamble ()
+  "This postamble is inserted at the end of the <body> of every page:"
+  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-postamble.html" user-emacs-directory))))
 
 (require 'org-static-blog)
 
