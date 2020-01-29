@@ -70,20 +70,20 @@
 ;;    ~/projects/blog/static/favicon.ico)
 (defun org-static-blog-page-header ()
   "This header is inserted into the <head> section of every page"
-  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-header.html" user-emacs-directory))))
+  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "blog-assert/blog-page-header.html" user-emacs-directory))))
 
 ;; This preamble is inserted at the beginning of the <body> of every page:
 ;;   This particular HTML creates a <div> with a simple linked headline
 (defun org-static-blog-page-preamble ()
   "This preamble is inserted at the beginning of the <body> of every page"
-  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-preamble.html" user-emacs-directory))))
+  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "blog-assert/blog-page-preamble.html" user-emacs-directory))))
 
 ;; This postamble is inserted at the end of the <body> of every page:
 ;;   This particular HTML creates a <div> with a link to the archive page
 ;;   and a licensing stub.
 (defun org-static-blog-page-postamble ()
   "This postamble is inserted at the end of the <body> of every page:"
-  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "custom/templete/blog-page-postamble.html" user-emacs-directory))))
+  (blog/fix-publish-url (blog/get-string-from-file (expand-file-name "blog-assert/blog-page-postamble.html" user-emacs-directory))))
 
 (require 'org-static-blog)
 
@@ -113,6 +113,40 @@
 (defun org-static-blog-get-draft-filenames ()
   "Returns a list of all drafts."
   (schspa/getposts "drafts"))
+
+(defun schspa/parent-directory (dir)
+  (if dir (unless (equal "/" dir)
+			(file-name-directory (directory-file-name dir)))
+	"."))
+(defun schspa/copy-file (from to)
+  "copy file and make directory automaticly"
+  (make-directory (schspa/parent-directory to) t)
+  (copy-file from to t t))
+
+(defun schspa/org-html-link (orig-fun &rest args)
+  (if (string-equal "file" (org-element-property :type (car args)))
+	  (let* ((his-link-path (org-element-property :path (car args)))
+			 (his-output-file-name (org-static-blog-matching-publish-filename (buffer-file-name)))
+			 (his-output-link-file-name
+			  (expand-file-name his-link-path (schspa/parent-directory his-output-file-name))))
+		(unless (string-prefix-p "/" his-link-path)
+		  (message "copy from %s to %s" his-link-path his-output-link-file-name)
+		  (schspa/copy-file his-link-path his-output-link-file-name))))
+  (apply orig-fun args))
+
+(defun my-org-static-blog-publish (orig-fun &rest args)
+  "An advice to copy blog assert to site directory"
+  (message "start publish my blog site")
+  (advice-add 'org-html-link :around #'schspa/org-html-link)
+  (copy-directory
+   (expand-file-name "blog-assert" user-emacs-directory)
+   (expand-file-name "assert" schspa/blog-sites) t t)
+  (let ((res (apply orig-fun args)))
+	(message "org-static-blog-publish returned %S" res)
+	(advice-remove 'org-html-link #'schspa/org-html-link)
+	res))
+
+(advice-add 'org-static-blog-publish :around #'my-org-static-blog-publish)
 
 (provide 'setup-blog)
 ;; coding: utf-8

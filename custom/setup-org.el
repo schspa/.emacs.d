@@ -89,6 +89,8 @@
    ))
 
 (require 'ob-drawio)
+
+(setq org-html-htmlize-output-type 'css)
 (provide 'setup-org)
 
 ;; Local Variables:
