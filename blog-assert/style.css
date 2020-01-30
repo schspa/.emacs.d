@@ -197,6 +197,13 @@ table {
     margin: 1.8rem 0;
 }
 
+blockquote {
+	border-left-color:rgb(192, 91, 77);
+	border-left-style:solid;
+	border-left-width:1px;
+	padding-left: 2rem;
+}
+
 thead tr {
     border-top: 2px solid #369;
 }
