@@ -148,6 +148,22 @@
 
 (advice-add 'org-static-blog-publish :around #'my-org-static-blog-publish)
 
+(defun my-org-static-blog-render-post-content (orig-fun &rest args)
+  "add comment system for every post"
+  (let ((res (apply orig-fun args)))
+	(concat res
+			"<script src=\"https://utteranc.es/client.js\""
+			"    repo=\"schspa/schspa.github.io\"\n"
+			"    issue-term=\"title\"\n"
+			"    label=\"✨💬✨\"\n"
+			"    theme=\"github-light\"\n"
+			"    crossorigin=\"anonymous\"\n"
+			"    async>"
+			"</script>"
+			))
+  )
+
+(advice-add 'org-static-blog-render-post-content :around #'my-org-static-blog-render-post-content)
 (provide 'setup-blog)
 ;; coding: utf-8
 ;; End:
