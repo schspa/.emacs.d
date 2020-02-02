@@ -61,6 +61,8 @@ There are two things you can do about this warning:
 
 ;; Map Alt key to Meta
 (setq x-alt-keysym 'meta)
+(setq mac-option-modifier 'meta)
+(setq mac-command-modifier 'hyper)
 
 ;; Find Executable Path on OS X
 (when (featurep 'cocoa)
