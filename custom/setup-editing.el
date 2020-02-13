@@ -30,6 +30,24 @@
   "Use rime for pyim"
   :group 'pyim)
 
+;; rime group
+(defcustom schspa/rime-shared-dir
+  (cond
+   (sys/macp "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
+   (sys/linuxp "/usr/share/rime-data")
+   (t "/usr/share/rime-data"))
+  "Use rime for pyim"
+  :group 'pyim)
+
+;; rime group
+(defcustom schspa/rime-user-dir
+  (cond
+   (sys/macp (file-truename "~/Library/Rime"))
+   (sys/linuxp (file-truename "~/.confg/fcitx/rime"))
+   (t (file-truename "~/.emacs.d/pyim/rime/")))
+  "Use rime for pyim"
+  :group 'pyim)
+
 (defcustom schspa/pyim-use-greatdict nil
   "Use rime for pyim"
   :group 'pyim)
@@ -46,7 +64,7 @@
            ;; refs to https://manateelazycat.github.io/emacs/2019/09/12/make-rime-works-with-linux.html
            (setq load-path (cons (file-truename "~/src/liberime/build/") load-path))
            (require 'liberime)
-           (liberime-start "/usr/share/rime-data/" (file-truename "~/.emacs.d/pyim/rime/"))
+           (liberime-start schspa/rime-shared-dir schspa/rime-user-dir)
            (liberime-select-schema "luna_pinyin_simp")
            (setq pyim-default-scheme 'rime-quanpin)))
         (schspa/pyim-use-greatdict
