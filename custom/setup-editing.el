@@ -386,9 +386,6 @@ Position the cursor at it's beginning, according to the current mode."
   (forward-line -1)
   (indent-according-to-mode))
 
-(global-set-key (kbd "M-o") 'prelude-smart-open-line)
-(global-set-key (kbd "M-o") 'open-line)
-
 (setq select-enable-primary nil)
 (setq select-enable-clipboard t)
 
