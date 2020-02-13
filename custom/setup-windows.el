@@ -97,6 +97,18 @@ _F_ullscreen            ^ ^             _b_alance^^^^          ^ ^        *  /\\
     (bind-key "C-c w" #'hydra-frame-window/body)))
 
 
+;; toggle two last used widnow
+;; https://emacs.stackexchange.com/a/7411/26868
+(defun switch-to-last-window ()
+  (interactive)
+  (let ((win (get-mru-window t t t)))
+    (unless win (error "Last window not found."))
+    (let ((frame (window-frame win)))
+      (select-frame-set-input-focus frame)
+      (select-window win))))
+
+(global-set-key (kbd "M-o") 'switch-to-last-window)
+
 (provide 'setup-windows)
 
 ;; Local Variables:
