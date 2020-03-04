@@ -43,7 +43,6 @@
 (defcustom schspa/rime-user-dir
   (cond
    (sys/macp (file-truename "~/Library/Rime"))
-   (sys/linuxp (file-truename "~/.confg/fcitx/rime"))
    (t (file-truename "~/.emacs.d/pyim/rime/")))
   "Use rime for pyim"
   :group 'pyim)
@@ -90,10 +89,15 @@
                   minibufferp))
   (pyim-isearch-mode 1)
   (setq pyim-page-tooltip 'posframe)
-  (setq pyim-page-length 5)
+  (setq pyim-page-length 9)
   :bind
   (("M-j" . pyim-convert-string-at-point)
-   ("C-;" . pyim-delete-word-from-personal-buffer)))
+   ("C-;" . pyim-delete-word-from-personal-buffer))
+  (:map pyim-mode-map
+        ("]" . pyim-page-next-page)
+        ("[" . pyim-page-previous-page)
+        ("-" . pyim-self-insert-command)
+        ("=" . pyim-self-insert-command)))
 
 (use-package yasnippet
   :ensure t
