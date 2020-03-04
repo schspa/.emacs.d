@@ -58,6 +58,10 @@
   (not (eq (getenv "WSL_DISTRO_NAME") nil))
   "Are we running on a WSL system?")
 
+(defconst sys/xprap
+  (not (eq (getenv "XPRA_SERVER_SOCKET") nil))
+  "Are we running on a WSL system?")
+
 (defconst sys/rootp
   (string-equal "root" (getenv "USER"))
   "Are you using ROOT user?")

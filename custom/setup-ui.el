@@ -73,13 +73,13 @@
   :group 'schspa
   :type 'float)
 
-(defcustom schspa/font-size-fixed 17
+(defcustom schspa/font-size-fixed 15
   "font-size in fixed."
   :group 'schspa
   :type 'int)
 
 (defun my-preferred-font-size ()
-  (if sys/wslp schspa/font-size-fixed
+  (if (or sys/wslp sys/xprap) schspa/font-size-fixed
     (truncate (* schspa/font-size (my-dpi)))))
 
 (defun setup-font ()
