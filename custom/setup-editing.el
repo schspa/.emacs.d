@@ -61,11 +61,10 @@
          (progn
            ;; setup rime
            ;; refs to https://manateelazycat.github.io/emacs/2019/09/12/make-rime-works-with-linux.html
-           (setq load-path (cons (file-truename "~/src/liberime/build/") load-path))
+           (setq load-path (cons (file-truename "~/src/liberime") load-path))
            (require 'liberime)
-           (liberime-start schspa/rime-shared-dir schspa/rime-user-dir)
            (liberime-select-schema "luna_pinyin_simp")
-           (setq pyim-default-scheme 'rime-quanpin)))
+           (setq pyim-default-scheme 'rime)))
         (schspa/pyim-use-greatdict
          (progn
            (use-package quelpa
