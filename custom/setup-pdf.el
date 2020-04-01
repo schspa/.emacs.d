@@ -1,7 +1,6 @@
 (when (display-graphic-p)
   (progn
 	(use-package pdf-tools
-	  :pin manual
 	  :config
 	  ;; iniitialize
 	  (pdf-tools-install)
