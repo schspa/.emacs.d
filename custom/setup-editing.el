@@ -144,7 +144,6 @@
                           (setq tab-width 4)))
 
 
-(setq-default indent-tabs-mode nil)
 (delete-selection-mode)
 (global-set-key (kbd "RET") 'newline-and-indent)
 
