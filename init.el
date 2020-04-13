@@ -29,6 +29,8 @@
 					  android-mode
 		              anaconda-mode
 					  company-c-headers
+                      quelpa
+                      quelpa-use-package
 					  ) "Default packages")
 
 (setq package-selected-packages my/packages)
@@ -60,6 +62,12 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (setq-default use-package-always-ensure t)
+
+(setq quelpa-update-melpa-p nil)
+(setq quelpa-self-upgrade-p nil)
+(require 'quelpa)
+
+(require 'quelpa-use-package)
 
 (setq custom-file "~/.emacs-custom.el")
 (if (file-exists-p custom-file) (load custom-file))
