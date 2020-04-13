@@ -25,28 +25,13 @@
 ;;; Code:
 
 
-;;export http_proxy="http://127.0.0.1:12333"
-;;export https_proxy="http://127.0.0.1:12333"
 
-(defun toggle-env-http-proxy ()
-  "set/unset the environment variable http_proxy which w3m uses"
-  (interactive)
-  (let ((proxy "http://127.0.0.1:12333"))
-    (if (string= (getenv "http_proxy") proxy)
-        ;; clear the proxy
-        (progn
-          (setenv "http_proxy" "")
-          (message "env http_proxy is empty now"))
-      ;; set the proxy
-      (setenv "http_proxy" proxy)
-      (message "env http_proxy is %s now" proxy))))
-
-(setq w3m-command "w3m")
 
 (use-package w3m
   :ensure t
   :config
   (setq w3m-search-default-engine "g")
+  (setq w3m-command "w3m")
   (eval-after-load "w3m-search"
     '(progn
        (add-to-list 'w3m-search-engine-alist '("b" "http://www.baidu.com/search?hl=en&q=%s" nil))
