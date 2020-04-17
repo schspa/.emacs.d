@@ -25,78 +25,16 @@
    ("C-c y S" . youdao-dictionary-search-at-point)
    ("C-c y p" . youdao-dictionary-play-voice-at-point)))
 
-;; pyim-setup group
-(defcustom schspa/pyim-use-rime nil
-  "Use rime for pyim"
-  :group 'pyim)
-
-;; rime group
-(defcustom schspa/rime-shared-dir
-  (cond
-   (sys/macp "/Library/Input Methods/Squirrel.app/Contents/SharedSupport")
-   (sys/linuxp "/usr/share/rime-data")
-   (t "/usr/share/rime-data"))
-  "Use rime for pyim"
-  :group 'pyim)
-
-;; rime group
-(defcustom schspa/rime-user-dir
-  (cond
-   (sys/macp (file-truename "~/Library/Rime"))
-   (t (file-truename "~/.emacs.d/pyim/rime/")))
-  "Use rime for pyim"
-  :group 'pyim)
-
-(defcustom schspa/pyim-use-greatdict nil
-  "Use rime for pyim"
-  :group 'pyim)
-
-(use-package pyim
-  :ensure t
-  :demand t
-  :init
-  :config
-
-  (cond (schspa/pyim-use-rime
-         (progn
-           ;; setup rime
-           ;; refs to https://manateelazycat.github.io/emacs/2019/09/12/make-rime-works-with-linux.html
-           (setq load-path (cons (file-truename "~/src/liberime") load-path))
-           (require 'liberime)
-           (liberime-select-schema "luna_pinyin_simp")
-           (setq pyim-default-scheme 'rime)))
-        (schspa/pyim-use-greatdict
-         (progn
-           (use-package quelpa
-             :init
-             (setq quelpa-upgrade-p nil)
-             (setq quelpa-update-melpa-p nil)
-             :ensure t)
-           (quelpa '(pyim-greatdict :fetcher github :repo "tumashu/pyim-greatdict"))
-           (require 'pyim-greatdict)
-           (pyim-greatdict-enable)
-           (setq pyim-default-scheme 'quanpin)))
-        (t (setq pyim-default-scheme 'quanpin)))
-
-  (message "pyim setup")
-  (setq default-input-method "pyim")
-
-  (setq-default pyim-english-input-switch-functions
-                '(pyim-probe-isearch-mode
-                  pyim-probe-program-mode
-                  pyim-probe-org-structure-template
-                  minibufferp))
-  (pyim-isearch-mode 1)
-  (setq pyim-page-tooltip 'posframe)
-  (setq pyim-page-length 9)
+(use-package rime
+  :quelpa (rime :fetcher github
+                :repo "DogLooksGood/emacs-rime"
+                :files ("*.el" "Makefile" "lib.c"))
+  :custom
+  (rime-show-candidate 'posframe)
+  (default-input-method "rime")
   :bind
-  (("M-j" . pyim-convert-string-at-point)
-   ("C-;" . pyim-delete-word-from-personal-buffer))
-  (:map pyim-mode-map
-        ("]" . pyim-page-next-page)
-        ("[" . pyim-page-previous-page)
-        ("-" . pyim-self-insert-command)
-        ("=" . pyim-self-insert-command)))
+  (:map rime-mode-map
+        ("C-`" . 'rime-send-keybinding)))
 
 (use-package yasnippet
   :ensure t

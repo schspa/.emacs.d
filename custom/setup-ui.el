@@ -49,6 +49,10 @@
   :config
   (popwin-mode 1))
 
+(use-package posframe
+  :ensure t
+  :demand t)
+
 ;; auto adjust font according to screen dpi
 ;; frome https://emacs.stackexchange.com/questions/28390/quickly-adjusting-text-to-dpi-changes
 (defun my-dpi ()
