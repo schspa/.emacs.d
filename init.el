@@ -99,4 +99,4 @@
 (require 'setup-pdf)
 (require 'setup-wsl)
 (require 'setup-blog)
-
+(require 'setup-telegram)
