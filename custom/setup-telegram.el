@@ -36,7 +36,7 @@
         )
   :defer t)
 
-(provide 'setup-blog)
+(provide 'setup-telegram)
 ;; Local Variables:
 ;; coding: utf-8
 ;; End:
