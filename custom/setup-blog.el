@@ -148,6 +148,17 @@
 
 (advice-add 'org-static-blog-publish :around #'my-org-static-blog-publish)
 
+(defun my-org-static-blog-publish-file (orig-fun &rest args)
+  "An advice to copy blog assert to site directory"
+  (message "start publish my blog post")
+  (advice-add 'org-html-link :around #'schspa/org-html-link)
+  (let ((res (apply orig-fun args)))
+	(message "org-static-blog-publish-file returned %S" res)
+	(advice-remove 'org-html-link #'schspa/org-html-link)
+	res))
+
+(advice-add 'org-static-blog-publish-file :around #'my-org-static-blog-publish-file)
+
 (defun my-org-static-blog-render-post-content (orig-fun &rest args)
   "add comment system for every post"
   (let ((res (apply orig-fun args)))

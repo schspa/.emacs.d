@@ -95,6 +95,15 @@
   :demand)
 
 (setq org-html-htmlize-output-type 'css)
+
+(use-package mermaid-mode
+  :ensure t
+  :demand)
+
+(use-package ob-mermaid
+  :ensure t
+  :demand)
+
 (provide 'setup-org)
 
 ;; Local Variables:
