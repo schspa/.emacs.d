@@ -49,8 +49,8 @@
 
 ;; Map Alt key to Meta
 (setq x-alt-keysym 'meta)
-(setq mac-option-modifier 'meta)
-(setq mac-command-modifier 'hyper)
+(setq mac-option-modifier 'hyper)
+(setq mac-command-modifier 'meta)
 
 ;; Find Executable Path on OS X
 (when (featurep 'cocoa)
