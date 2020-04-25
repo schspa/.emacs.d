@@ -90,6 +90,10 @@
 
 (require 'ob-drawio)
 
+(use-package htmlize
+  :ensure t
+  :demand)
+
 (setq org-html-htmlize-output-type 'css)
 (provide 'setup-org)
 
