@@ -8,14 +8,7 @@
   (setq-default pdf-view-display-size 'fit-page)
   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
-(use-package org-pdfview
-  :if (display-graphic-p)
-  :after (pdf-tools)
-  :ensure t
-  :config
-  (eval-after-load 'org '(require 'org-pdfview))
-  (add-to-list 'org-file-apps
-			   '("\\.pdf\\'" . (lambda (file link)
-								 (org-pdfview-open link)))))
+(use-package org-pdftools
+  :hook (org-load . org-pdftools-setup-link))
 
 (provide 'setup-pdf)
