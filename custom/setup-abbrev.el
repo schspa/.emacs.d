@@ -41,7 +41,6 @@
 
 	;; english word abbrev
     ("ann" "announcement" )
-    ("arg" "argument" )
     ("autom" "automatic" )
     ("bc" "because" )
     ("bg" "background" )
@@ -76,7 +75,6 @@
 
     ;; programing
     ("eq" "==" )
-    ("r" "return" )
     ("utf8" "-*- coding: utf-8 -*-" )
 
     ;; regex
@@ -110,7 +108,6 @@ func main() {
 
     ("p" "fmt.Printf(\"%v\\n\", hh▮)")
     ("pl" "fmt.Println(hh▮)")
-    ("r" "return")
     ("st" "string")
     ("eq" "==")
     ("v" "var x = 3")
