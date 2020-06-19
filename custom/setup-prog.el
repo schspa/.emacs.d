@@ -27,9 +27,7 @@
 (add-hook 'prog-mode-hook
           '(lambda ()
              (smartparens-mode t)
-             (define-key global-map (kbd "M-r") 'helm-gtags-find-rtag)
-             (define-key global-map (kbd "M-t") 'helm-dwim-target)
-             (define-key global-map (kbd "M-i") 'helm-semantic-or-imenu)
+             (define-key global-map (kbd "M-i") 'helm-imenu)
              (when (< emacs-major-version 26)
                (line-number-mode))
              (show-paren-mode t)

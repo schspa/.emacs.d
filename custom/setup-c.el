@@ -57,7 +57,6 @@
 (add-hook 'c-mode-common-hook
           (lambda ()
 			(hs-minor-mode t)
-			(helm-gtags-mode t)
             (set (make-local-variable 'company-backends)
                  '((company-lsp company-c-headers company-keywords company-dabbrev)))))
 
