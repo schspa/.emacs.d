@@ -45,7 +45,8 @@
               ;; Enable kernel mode for the appropriate files
               (setq indent-tabs-mode t)
               (setq show-trailing-whitespace t)
-              (c-set-style "linux-tabs-only"))))
+              (c-set-style "linux-tabs-only")
+              (setq tab-width c-basic-offset))))
 
 (use-package cc-mode
   :init
