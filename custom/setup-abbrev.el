@@ -42,51 +42,6 @@
 	;; english word abbrev
     ("ann" "announcement" )
     ("autom" "automatic" )
-    ("bc" "because" )
-    ("bg" "background" )
-    ("bt" "between" )
-    ("math" "mathematics" )
-
-    ;; computing
-    ("ahk" "AutoHotkey" )
-    ("cfg" "context-free grammar" )
-    ("cj" "Clojure" )
-    ("cs" "computer science" )
-
-    ;; tech company
-    ("gc" "Google Chrome" )
-    ("gm" "Google Map" )
-    ("macos" "Mac OS" )
-    ("msw" "Microsoft Windows" )
-
-    ;; programing
-    ("ev" "environment variable" )
-    ("ipa" "IP address" )
-    ("jvm" "Java Virtual Machine" )
-    ("rsi" "Repetitive Strain Injury" )
-    ("subdir" "sub-directory" )
-    ("wd" "web development" )
-
-    ("db" "database" )
-    ("gui3" "graphical user interface" )
-    ("oop3" "object oriented programing" )
-
-    ("os3" "operating system" )
-
-    ;; programing
-    ("eq" "==" )
-    ("utf8" "-*- coding: utf-8 -*-" )
-
-    ;; regex
-    ("xaz" "\\([A-Za-z0-9]+\\)" )
-
-    ;; unicode
-    ("md" "—" )
-
-    ("hr" "--------------------------------------------------" )
-    ("bu" "•" )
-    ("hrt" "♥" )
-    ("ra" "→" )
 
     ;;
     ))
