@@ -104,6 +104,7 @@
   :ensure t
   :demand)
 
+(require 'org-tempo)
 (provide 'setup-org)
 
 ;; Local Variables:
