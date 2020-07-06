@@ -337,4 +337,17 @@ Position the cursor at it's beginning, according to the current mode."
   :config
   (setq-default company-dabbrev-ignore-case nil))
 
+(use-package edit-server
+  :ensure t
+  :commands edit-server-start
+  :init (progn
+          (if after-init-time
+              (edit-server-start)
+            (add-hook 'after-init-hook
+                      #'(lambda() (edit-server-start)))))
+  :config (setq edit-server-url-major-mode-alist
+                (list '("stackexchange" . markdown-mode)
+                      '("github.com" . markdown-mode)
+                      '("emacs-china.org" . markdown-mode))))
+
 (provide 'setup-editing)
