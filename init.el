@@ -76,6 +76,8 @@
 
 (require 'use-package)
 
+(server-start)
+
 (require 'init-const)
 (require 'setup-ui)
 (require 'setup-modeline)
