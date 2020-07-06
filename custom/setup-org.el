@@ -104,7 +104,9 @@
   :ensure t
   :demand)
 
-(require 'org-tempo)
+(if (featurep 'org-tempo)
+    (require 'org-tempo))
+
 (provide 'setup-org)
 
 ;; Local Variables:
