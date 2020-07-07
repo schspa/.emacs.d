@@ -36,6 +36,39 @@
   (:map rime-mode-map
         ("C-`" . 'rime-send-keybinding)))
 
+(use-package smart-input-source
+  :ensure t
+  :init
+  (if sys/macp
+      (progn
+        ;; set the english input source
+        (setq smart-input-source-english
+              "com.apple.keylayout.ABC")
+        ;; set the default other language input source for all buffer
+        (setq-default smart-input-source-other
+                      "im.rime.inputmethod.Squirrel.Rime"))
+    (progn
+      (setq smart-input-source-english nil)
+      (setq-default smart-input-source-other "rime")))
+  ;; customize your own triggers, the /hint-mode/ may help.
+  ;; (push 'YOUR-COMMAND smart-input-source-preserve-save-triggers)
+
+  :hook
+  ;; enable the /follow context/ and /inline region/ mode for specific buffers
+  (((text-mode prog-mode) . smart-input-source-follow-context-mode)
+   ((text-mode prog-mode) . smart-input-source-inline-mode))
+
+  :config
+  ;; enable the /cursor color/ mode
+  (smart-input-source-global-cursor-color-mode t)
+  ;; enable the /respect/ mode
+  (smart-input-source-global-respect-mode t)
+  ;; enable the /follow context/ mode for all buffers
+  (smart-input-source-global-follow-context-mode t)
+  ;; enable the /inline english/ mode for all buffers
+  (smart-input-source-global-inline-mode t)
+  :bind (("C-\\" . smart-input-source-switch)))
+
 (use-package yasnippet
   :ensure t
   :init
