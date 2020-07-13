@@ -23,7 +23,8 @@
 ;;
 
 ;;; Code:
-(menu-bar-mode 0)
+(when (not sys/mac-x-p)
+  (menu-bar-mode 0))
 (tool-bar-mode 0)
 
 (if window-system (scroll-bar-mode 0))
