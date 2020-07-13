@@ -64,6 +64,12 @@
 (if (file-directory-p "~/Dropbox/org") (setq org-agenda-files '("~/Dropbox/org")))
 
 (global-set-key (kbd "C-c a") 'org-agenda)
+
+(require 'tramp)
+(setq tramp-terminal-type "tramp")
+(setq tramp-default-method "ssh")
+(setq tramp-chunksize 100)
+
 (define-key global-map (kbd "C-c t") 'helm-tramp)
 
 (use-package sr-speedbar
