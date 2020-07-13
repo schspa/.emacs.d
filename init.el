@@ -101,3 +101,4 @@
 (require 'setup-wsl)
 (require 'setup-blog)
 (require 'setup-telegram)
+(require 'setup-vterm)
