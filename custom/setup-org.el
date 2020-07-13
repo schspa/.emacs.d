@@ -104,8 +104,10 @@
   :ensure t
   :demand)
 
-(if (featurep 'org-tempo)
-    (require 'org-tempo))
+;; FIXME: workaround
+;; https://github.com/syl20bnr/spacemacs/issues/11798
+(when (version<= "9.2" (org-version))
+  (require 'org-tempo))
 
 (provide 'setup-org)
 
