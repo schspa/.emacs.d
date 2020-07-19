@@ -1,12 +1,16 @@
 (use-package ivy
+  :diminish ivy-mode
   :init
-  (progn
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-    (global-set-key (kbd "C-c s") 'swiper))
-  :bind (("C-c h o" . counsel-grep-or-swiper)))
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-use-selectable-prompt t)
+  (setq ivy-count-format "(%d/%d) ")
+  :hook (after-init . ivy-mode)
+  :bind (("C-c h o" . counsel-grep-or-swiper)
+         ("C-c s" . swiper)))
 
 (use-package counsel
+  :after ivy
   :bind
   (("M-x" . counsel-M-x)
    ("M-y" . counsel-yank-pop)
@@ -21,13 +25,21 @@
    ("M-i" . counsel-imenu))
   (:map counsel-find-file-map ("C-l" . counsel-up-directory)))
 
+(use-package ivy-xref
+  :ensure t
+  :after ivy
+  :config
+  (setq xref-show-xrefs-function 'ivy-xref-show-xrefs))
+
 (use-package counsel-projectile
+  :after counsel
   :init
   (counsel-projectile-mode))
 
 (use-package ivy-posframe
+  :after counsel ivy
   :init
-  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-point)))
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
   (require 'ivy-posframe)
   (ivy-posframe-mode 1))
 
