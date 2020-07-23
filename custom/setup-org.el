@@ -109,6 +109,18 @@
 (when (version<= "9.2" (org-version))
   (require 'org-tempo))
 
+(use-package org-download
+  :ensure t
+  :config
+  (setq-default org-download-image-dir "~/org/pic")
+  (setq-default org-download-display-inline-images t)
+  (setq-default org-download-heading-lvl nil)
+  (if (equal system-type 'darwin)
+      (setq org-download-screenshot-method "/usr/sbin/screencapture -i %s"))
+  :hook
+  ((dired-mode . org-download-enable)
+   (org-mode . org-download-enable)))
+
 (provide 'setup-org)
 
 ;; Local Variables:
