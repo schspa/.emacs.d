@@ -61,7 +61,7 @@
 (recentf-mode t)
 (setq-default recentf-max-menu-item 200)
 
-(if (file-directory-p "~/Dropbox/org") (setq org-agenda-files '("~/Dropbox/org")))
+(if (file-directory-p "~/org") (setq org-agenda-files '("~/org")))
 
 (global-set-key (kbd "C-c a") 'org-agenda)
 
