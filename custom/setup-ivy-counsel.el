@@ -7,7 +7,7 @@
   (setq ivy-count-format "(%d/%d) ")
   :hook (after-init . ivy-mode)
   :bind (("C-c h o" . counsel-grep-or-swiper)
-         ("C-c s" . swiper)))
+         ("C-c s" . swiper-all-thing-at-point)))
 
 (use-package counsel
   :after ivy
