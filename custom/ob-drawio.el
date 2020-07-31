@@ -37,7 +37,9 @@
   '((:results . "file") (:exports . "results") (:in-file . "in-file"))
   "Default arguments for evaluatiing a drawio source block.")
 
-(defcustom ob-drawio-cli-path nil
+(defcustom ob-drawio-cli-path
+  (cond (sys/macp "/Applications/draw.io.app/Contents/MacOS/draw.io")
+        (t nil))
   "Path to drawio.cli executable."
   :group 'org-babel
   :type 'string)
