@@ -148,5 +148,11 @@
                   "return links as string\n"))))
     (format "%s" (s-chop-suffix "\"" (s-chop-prefix "\"" result)))))
 
+(use-package cal-china-x
+  :ensure t
+  :config
+  (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
+  (setq calendar-holidays
+        (append cal-china-x-important-holidays)))
 
 (provide 'setup-general)
