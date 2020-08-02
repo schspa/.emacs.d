@@ -49,8 +49,11 @@
 
 (use-package magit
   :ensure t
-  :bind ("C-x g" . magit-status))
-
+  :bind
+  ("C-x g" . magit-status)
+  (:map magit-diff-section-base-map
+        ("C-x o" . ace-window)
+        ("C-x C-f" . counsel-find-file)))
 
 ;; Package zygospore
 (use-package zygospore
