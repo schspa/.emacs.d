@@ -69,6 +69,13 @@
 
 (require 'quelpa-use-package)
 
+(use-package el-get
+  :ensure t
+  :init
+  (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+  :config
+  (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes"))
+
 (setq custom-file "~/.emacs-custom.el")
 (if (file-exists-p custom-file) (load custom-file))
 
