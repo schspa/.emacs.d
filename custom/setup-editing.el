@@ -35,8 +35,13 @@
   (:map rime-mode-map
         ("C-`" . 'rime-send-keybinding)))
 
+;;(setq use-package-ensure-function 'quelpa)
+(quelpa-use-package-activate-advice)
+
 (use-package sis
-  :ensure t
+  :quelpa
+  (sis :fetcher github
+       :repo "schspa/emacs-smart-input-source")
   :config
   (if sys/macp
       (sis-ism-lazyman-config

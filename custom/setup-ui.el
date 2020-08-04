@@ -95,7 +95,7 @@
       (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Monaco" "SF Mono" "Hack" "Source Code Pro" "Fira Code"
                       "Menlo" "DejaVu Sans Mono" "Consolas"))
         (when (member font (font-family-list))
-          (set-face-attribute 'default nil :font font :height (* (my-preferred-font-size) 10))
+          (set-face-attribute 'default nil :font font)
           (throw 'loop t))))
 
     ;; Specify font for all unicode characters

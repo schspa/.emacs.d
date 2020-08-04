@@ -68,6 +68,7 @@
 (require 'quelpa)
 
 (require 'quelpa-use-package)
+(quelpa-use-package-activate-advice)
 
 (use-package el-get
   :ensure t
