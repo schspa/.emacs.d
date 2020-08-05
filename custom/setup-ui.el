@@ -112,32 +112,37 @@
           (set-fontset-font t '(#x4e00 . #x9fff) font)
           (throw 'loop t))))))
 
-(use-package dracula-theme
-  :ensure t)
+(use-package doom-themes
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
-(use-package ample-theme
-  :ensure t
-  :init
-  (progn (load-theme 'ample t t)
-         (load-theme 'ample-flat t t)
-         (load-theme 'ample-light t t))
-  :defer t
-  :ensure t)
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-colors") ; use the colorful treemacs theme
+  (doom-themes-treemacs-config)
+
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+(defun my-setup-theme (frame)
+  "Setting my theme"
+  (if frame (select-frame frame))
+  (if (display-graphic-p frame)
+      (progn
+        (load-theme 'doom-one t)
+        (setup-font))
+    (load-theme 'doom-one t)))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (select-frame frame)
-                (if (display-graphic-p frame)
-                    (progn
-                      (load-theme 'dracula t)
-                      (enable-theme 'dracula)
-                      (setup-font)))))
-  (if (display-graphic-p)
-      (progn
-        (enable-theme 'dracula)
-        (setup-font))
-    (enable-theme 'ample-flat)))
+              'my-setup-theme)
+  (my-setup-theme nil))
 
 (use-package dashboard
   :ensure t
