@@ -96,7 +96,6 @@
 (require 'setup-md)
 (require 'setup-windows)
 (require 'setup-abbrev)
-(require 'setup-cedet)
 (require 'setup-editing)
 (require 'setup-lsp)
 (require 'setup-c)

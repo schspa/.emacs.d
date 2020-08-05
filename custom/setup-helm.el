@@ -59,7 +59,6 @@
           helm-org-headings-fontify t
           ;; helm-find-files-sort-directories t
           ;; ido-use-virtual-buffers t
-          helm-semantic-fuzzy-match t
           helm-M-x-fuzzy-match t
           helm-imenu-fuzzy-match t
           helm-lisp-fuzzy-completion t

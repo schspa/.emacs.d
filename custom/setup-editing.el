@@ -353,7 +353,6 @@ Position the cursor at it's beginning, according to the current mode."
 (use-package company
   :init
   (global-company-mode 1)
-  (delete 'company-semantic company-backends)
   :config
   (setq-default company-dabbrev-ignore-case nil))
 
