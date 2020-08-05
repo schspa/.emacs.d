@@ -121,6 +121,10 @@
   ((dired-mode . org-download-enable)
    (org-mode . org-download-enable)))
 
+(let ((font "Sarasa Mono SC"))
+  (when (member font (font-family-list))
+    (set-face-attribute 'org-table  nil  :font "Sarasa Mono SC")))
+
 (provide 'setup-org)
 
 ;; Local Variables:
