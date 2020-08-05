@@ -84,7 +84,12 @@
 
 (require 'use-package)
 
-(server-start)
+(require 'server)
+(let* ((server-dir (if server-use-tcp server-auth-dir server-socket-dir))
+	   (server-file (expand-file-name server-name server-dir)))
+  (message "server server-file: %s" server-file)
+  (unless (file-exists-p server-file)
+    (server-start)))
 
 (require 'init-const)
 (require 'setup-ui)
