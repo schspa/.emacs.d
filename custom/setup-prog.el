@@ -24,6 +24,16 @@
 
 ;;; Code:
 
+(setq-default fill-column 80)
+(if (version< emacs-version "27.0.1")
+    (use-package fill-column-indicator
+      :ensure t
+      :init
+
+      :config
+      :hook (prog-mode . fci-mode))
+  (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode))
+
 (add-hook 'prog-mode-hook
           '(lambda ()
              (smartparens-mode t)
