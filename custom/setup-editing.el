@@ -41,7 +41,7 @@
 (use-package sis
   :quelpa
   (sis :fetcher github
-       :repo "schspa/emacs-smart-input-source")
+       :repo "laishulu/emacs-smart-input-source")
   :config
   (if sys/macp
       (sis-ism-lazyman-config
