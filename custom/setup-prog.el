@@ -52,6 +52,13 @@
  gdb-show-main t
  )
 
+(use-package elf-mode
+  :quelpa
+  (elf-mode :fetcher github
+            :repo "schspa/elf-mode")
+  :ensure t
+  )
+
 (use-package flycheck
   :ensure t
   :init
