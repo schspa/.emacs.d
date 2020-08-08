@@ -30,12 +30,20 @@
        :repo "manateelazycat/emacs-application-framework"
        :files ("*"))
   :defer t
+  :init
+  (defun schspa/move-mouse-to-frame-top-bottom ()
+    "Move mouse position to bottom"
+    (let* ((is_i3 (equal "i3" (getenv "DESKTOP_SESSION")))
+           (frame (car (mouse-position)))
+           (commands (format "xdotool mousemove %d %d" (car (frame-edges)) (nth 3 (frame-edges)))))
+      (if is_i3 (shell-command commands))))
   :custom
   (eaf-find-alternate-file-in-dired t)
   :config
   (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
   (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-  (eaf-bind-key take_photo "p" eaf-camera-keybinding))
+  (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+  :hook (eaf-mode . schspa/move-mouse-to-frame-top-bottom))
 
 
 (provide 'setup-eaf)
