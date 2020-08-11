@@ -125,6 +125,91 @@
   (when (member font (font-family-list))
     (set-face-attribute 'org-table  nil  :font "Sarasa Mono SC")))
 
+;; GTD
+;;set status for TODO.
+(setq org-todo-keywords
+      '((sequence "INBOX(t)" "ONGOING(o)" "LATER(l)" "WAIT/FORWARD(f)" "MAYBE/FUTURE(m)" "|" "CANCEL(c@)" "DONE(d)")))
+;; 配置状态颜色
+;; color for todo keywords
+(setq org-todo-keyword-faces '(
+                               ("INBOX" . (:foreground "blue" :weight bold))
+                               ("ONGOING" . org-warning)
+                               ("LATER" . "yellow")
+                               ("WAIT/FORWARD" . "blue")
+                               ("MAYBE/FUTURE" . "purple")
+                               ("DONE" . "green")
+                               ("CANCEL" . "grey")
+                               ))
+
+;;add timestamp when todo change to done.
+(setq org-log-done 'time)
+
+;;Settings for global id link.
+(require 'org-id)
+(setq org-id-link-to-org-use-id t)
+
+(global-set-key "\C-cl" 'org-store-link)
+
+;;set priority
+(setq org-highest-priority ?A)
+(setq org-lowest-priority ?D)
+(setq org-default-priority ?A)
+(setq org-priority-faces '(
+                           (?A . org-warning)
+                           (?B . (:background "DodgerBlue" :foreground "black" :weight bold))
+                           (?C . (:foreground "SkyBlue" :weight bold))
+                           (?D . (:foreground "DodgerBlue" :weight bold))
+                           )
+      )
+
+
+;;Setting for gtd captures
+;;Directory for capture files.
+(setq org-directory "~/org/")
+;;Default capture files.
+(setq org-default-notes-file (concat org-directory "gtd/inbox.org"))
+;;Capture template
+(setq org-capture-templates '(
+                              ("t" "Tasks" entry (file+headline "gtd/inbox.org" "Tasks") "* INBOX %?\nTime:%T\nFrom:%F\n")
+                              ("p" "Projects" entry (file+headline "gtd/inbox.org" "Projects")  "* %?\nTime:%U\nFrom:%F\n")
+                              ("i" "Item notes" item (file+headline "gtd/inbox.org" "Items")  "+ %?\n  Time:%U\n  From:%F\n")
+                              ("m" "Misc notes" plain (file+headline "misc.org" "Notes")  "-----------------------------------------------------\nTime:%U\n %?")
+                              )
+      )
+
+;;set tags
+;;where?(h/o/w),what?(c/l/s),when?(gtd|immeiately,wait,action),who?(my gtd,others),why?how?(delete/archieve/schedule)
+(setq org-tag-alist '(
+                      (:startgroup . nil)
+                      ("home" . ?r) ("office" . ?o) ("way" . ?w)
+                      (:endgroup . nil)
+                      ("职业" . ?c)
+                      ("生活" . ?l)
+                      ("学习" . ?s)
+                      ))
+
+;;targets for refile
+(setq org-refile-targets (quote (
+                                 (nil :maxlevel . 9)
+                                 (org-agenda-files :maxlevel . 9)
+                                 )
+                                )
+      )
+;;outline path for refile
+(setq org-refile-use-outline-path 'full-file-path)
+;;org-outline-path-complete-in-steps
+(setq org-outline-path-complete-in-steps t)
+;;create new parents while refile
+(setq org-refile-allow-creating-parent-nodes 'confirm)
+
+(setq org-outline-path-complete-in-steps nil)
+
+;;location for archive
+(setq org-archive-location (concat org-directory "gtd/_archive/" (format-time-string "%Y%m") "_archive.org::datetree/* Archive from %s"))
+;;information added to property when a subtree is moved
+(setq org-archive-save-context-info '(time file ltags itags todo category olpath))
+
+;;set agenda files
 (provide 'setup-org)
 
 ;; Local Variables:
