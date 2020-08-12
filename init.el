@@ -111,7 +111,6 @@
 (require 'setup-org)
 (require 'setup-pdf)
 (require 'setup-wsl)
-(require 'setup-blog)
 (require 'setup-site)
 (require 'setup-telegram)
 (require 'setup-vterm)
