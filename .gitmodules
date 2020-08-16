@@ -1,9 +1,6 @@
 [submodule "git/emacs-maple-preview"]
 	path = git/emacs-maple-preview
 	url = https://github.com/honmaple/emacs-maple-preview.git
-[submodule "git/eaf"]
-	path = git/eaf
-	url = https://github.com/manateelazycat/emacs-application-framework.git
 [submodule "git/org-static-blog"]
 	path = git/org-static-blog
 	url = git@github.com:schspa/org-static-blog.git
