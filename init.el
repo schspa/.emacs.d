@@ -113,4 +113,5 @@
 (require 'setup-wsl)
 (require 'setup-site)
 (require 'setup-telegram)
+(require 'setup-mail)
 (require 'setup-vterm)
