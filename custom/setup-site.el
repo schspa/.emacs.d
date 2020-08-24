@@ -54,7 +54,7 @@
     (setq org-publish-project-alist
           '(("orgfiles"
              ;; ; Sources and destinations for files.
-             :base-directory "~/site/org/"  ;; local dir
+             :base-directory "~/org/blogs/"  ;; local dir
              :publishing-directory "~/site/public/" ;; :publishing-directory "/ssh:jack@192.112.245.112:~/site/public/"
              ;; :preparation-function
              ;; :complete-function
@@ -80,7 +80,7 @@
              ;; :preserve-breaks	org-export-preserve-breaks
              :section-numbers nil	;; org-export-with-section-numbers
              ;; :select-tags	org-export-select-tags
-             :with-author "Jack Liu" ;; org-export-with-author
+             :with-author "Schspa" ;; org-export-with-author
              ;; :with-broken-links	org-export-with-broken-links
              ;; :with-clocks	t ;; org-export-with-clocks
              ;; :with-creator nil ;; org-export-with-creator
@@ -271,7 +271,7 @@
     (remove-hook 'after-save-hook #'save-and-publish-file :local)))
 
 (eval-after-load 'auto-save-and-publish-file-mode
-  (add-hook 'org-mode-hook auto-save-and-publish-file-mode))
+  (add-hook 'org-mode-hook 'auto-save-and-publish-file-mode))
 
 (use-package simple-httpd
   :ensure t
