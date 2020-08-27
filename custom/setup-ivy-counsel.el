@@ -23,7 +23,70 @@
    ("C-h v" . counsel-describe-variable)
    ("C-h l" . counsel-load-library)
    ("M-i" . counsel-imenu))
-  (:map counsel-find-file-map ("C-l" . counsel-up-directory)))
+  (:map counsel-find-file-map ("C-l" . counsel-up-directory))
+  :config
+  ;; reference to https://github.com/seagle0128/.emacs.d/blob/1398ae9339dd03f67dca836a80e25b91eae2f8d5/lisp/init-ivy.el
+  ;; Pre-fill search keywords
+  ;; @see https://www.reddit.com/r/emacs/comments/b7g1px/withemacs_execute_commands_like_marty_mcfly/
+  (defvar my-ivy-fly-commands
+    '(query-replace-regexp
+      flush-lines keep-lines ivy-read
+      swiper swiper-backward swiper-all
+      swiper-isearch swiper-isearch-backward
+      lsp-ivy-workspace-symbol lsp-ivy-global-workspace-symbol
+      counsel-grep-or-swiper counsel-grep-or-swiper-backward
+      counsel-grep counsel-ack counsel-ag counsel-rg counsel-pt))
+  (defvar-local my-ivy-fly--travel nil)
+
+  (defun my-ivy-fly-back-to-present ()
+    (cond ((and (memq last-command my-ivy-fly-commands)
+                (equal (this-command-keys-vector) (kbd "M-p")))
+           ;; repeat one time to get straight to the first history item
+           (setq unread-command-events
+                 (append unread-command-events
+                         (listify-key-sequence (kbd "M-p")))))
+          ((or (memq this-command '(self-insert-command
+                                    ivy-forward-char
+                                    ivy-delete-char delete-forward-char
+                                    end-of-line mwim-end-of-line
+                                    mwim-end-of-code-or-line mwim-end-of-line-or-code
+                                    yank ivy-yank-word counsel-yank-pop))
+               (equal (this-command-keys-vector) (kbd "M-n")))
+           (unless my-ivy-fly--travel
+             (delete-region (point) (point-max))
+             (when (memq this-command '(ivy-forward-char
+                                        ivy-delete-char delete-forward-char
+                                        end-of-line mwim-end-of-line
+                                        mwim-end-of-code-or-line
+                                        mwim-end-of-line-or-code))
+               (insert (ivy-cleanup-string ivy-text))
+               (when (memq this-command '(ivy-delete-char delete-forward-char))
+                 (beginning-of-line)))
+             (setq my-ivy-fly--travel t)))))
+
+  (defun my-ivy-fly-time-travel ()
+    (when (memq this-command my-ivy-fly-commands)
+      (let* ((kbd (kbd "M-n"))
+             (cmd (key-binding kbd))
+             (future (and cmd
+                          (with-temp-buffer
+                            (when (ignore-errors
+                                    (call-interactively cmd) t)
+                              (buffer-string))))))
+        (when future
+          (save-excursion
+            (insert (propertize (replace-regexp-in-string
+                                 "\\\\_<" ""
+                                 (replace-regexp-in-string
+                                  "\\\\_>" ""
+                                  future))
+                                'face 'shadow)))
+          (add-hook 'pre-command-hook 'my-ivy-fly-back-to-present nil t)))))
+
+  (add-hook 'minibuffer-setup-hook #'my-ivy-fly-time-travel)
+  (add-hook 'minibuffer-exit-hook
+            (lambda ()
+              (remove-hook 'pre-command-hook 'my-ivy-fly-back-to-present t))))
 
 (use-package ivy-xref
   :ensure t
