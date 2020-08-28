@@ -57,8 +57,6 @@
   (setq lsp-enable-indentation nil)
   (setq lsp-enable-file-watchers nil)
   ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
-  :config
-  (require 'lsp-clients)          ; ocaml,css,python,bash,...
   :hook
   (hack-local-variables . (lambda ()
 							(cond ((derived-mode-p 'c-mode 'c++-mode 'objc-mode)
