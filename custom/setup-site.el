@@ -46,6 +46,78 @@
         org-html-head-include-scripts nil
         ))
 
+(defun org-blogs-get-date (filename)
+  "Extract the `#+date:` from file-name as date-time."
+  (let ((case-fold-search t))
+    (with-temp-buffer
+      (insert-file-contents filename)
+      (goto-char (point-min))
+      (if (search-forward-regexp "^\\#\\+date:[ ]*<\\([^]>]+\\)>$" nil t)
+	      (date-to-time (match-string 1))
+	    (time-since 0)))))
+
+(defun org-blogs-generate-post-link-path (post-filename)
+  (format-time-string "%Y/%m/%d/" (org-blogs-get-date post-filename)))
+
+(defun org-blogs-generate-post-path (post-filename)
+  (concat "~/site/public/" (org-blogs-generate-post-link-path post-filename)))
+
+(defun schspa/readlines (filePath)
+  "Return a list for a file"
+  (with-temp-buffer
+	(insert-file-contents filePath)
+	(split-string (buffer-string) "\n" t)))
+
+(defcustom schspa/blog-source-dir "~/org/"
+  "font-size in mm."
+  :group 'schspa
+  :type 'string)
+
+(defun schspa/getposts (filePath)
+  "Return posts file name"
+  (seq-filter 'file-readable-p
+			  (mapcar (lambda (arg)
+						(expand-file-name arg schspa/blog-source-dir))
+					  (schspa/readlines
+					   (expand-file-name filePath schspa/blog-source-dir)))))
+
+(defun org-blog-update-post-include-list ()
+  (let* ((project (cdr (car org-publish-project-alist))))
+    (plist-put project :include (schspa/getposts "posts"))))
+
+(defun org-blog-get-out-dir (filename default)
+  (let* ((is-external-file
+          (string-prefix-p "../" (file-relative-name filename "~/org/blogs/")))
+         (out-dir (if is-external-file
+                      (org-blogs-generate-post-path filename) default)))
+    out-dir))
+
+(defun schspa/org-html-link (orig-fun &rest args)
+  (if (string-equal "file" (org-element-property :type (car args)))
+	  (let* ((raw-path (org-element-property :path (car args)))
+             (output-path
+              (concat
+               (org-blogs-generate-post-link-path (expand-file-name raw-path))
+               (file-name-nondirectory raw-path))))
+        (org-element-put-property (car args) :path output-path))
+    )
+  (apply orig-fun args))
+
+(defun org-html-publish-to-blogs (plist filename pub-dir)
+  "Publish an org file to HTML.
+
+FILENAME is the filename of the Org file to be published.  PLIST
+is the property list for the given project.  PUB-DIR is the
+publishing directory.
+
+Return output file name."
+  (let ((output))
+    (advice-add 'org-html-link :around #'schspa/org-html-link)
+    (setq output (org-html-publish-to-html
+                  plist filename (org-blog-get-out-dir filename pub-dir)))
+    (advice-remove 'org-html-link #'schspa/org-html-link)
+    output))
+
 (eval-after-load 'ox-publish
   ;; org-publish-project-alist
   ;; ("project-name" :property value :property value ...)
@@ -66,7 +138,7 @@
              :recursive t
 
              ;; ; Publishing action
-             :publishing-function org-html-publish-to-html
+             :publishing-function org-html-publish-to-blogs
 
              ;; :htmlized-source
 
