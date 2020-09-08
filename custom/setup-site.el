@@ -81,10 +81,6 @@
 					  (schspa/readlines
 					   (expand-file-name filePath schspa/blog-source-dir)))))
 
-(defun org-blog-update-post-include-list ()
-  (let* ((project (cdr (car org-publish-project-alist))))
-    (plist-put project :include (schspa/getposts "posts"))))
-
 (defun org-blog-get-out-dir (filename default)
   (let* ((is-external-file
           (string-prefix-p "../" (file-relative-name filename "~/org/blogs/")))
@@ -118,13 +114,22 @@ Return output file name."
     (advice-remove 'org-html-link #'schspa/org-html-link)
     output))
 
+(defun org-blogs-postamble (info)
+  (with-temp-buffer
+    (let ((files '()))
+      (unless (string-prefix-p "index." (plist-get info :input-buffer))
+        (add-to-list 'files "~/site/assets/postamble.html"))
+      (add-to-list 'files "~/site/assets/footer.html")
+      (dolist (postamblefile files) (insert-file-contents postamblefile)))
+    (buffer-string)))
+
 (eval-after-load 'ox-publish
   ;; org-publish-project-alist
   ;; ("project-name" :property value :property value ...)
   ;; ("project-name" :components ("project-name" "project-name" ...))
   (lambda ()
     (setq org-publish-project-alist
-          '(("orgfiles"
+          `(("orgfiles"
              ;; ; Sources and destinations for files.
              :base-directory "~/org/blogs/"  ;; local dir
              :publishing-directory "~/site/public/" ;; :publishing-directory "/ssh:jack@192.112.245.112:~/site/public/"
@@ -134,7 +139,7 @@ Return output file name."
              ;; ; Selecting files
              :base-extension "org"
              ;; :exclude "PrivatePage.org"     ;; regexp
-             ;; :include
+             :include ,(schspa/getposts "posts")
              :recursive t
 
              ;; ; Publishing action
@@ -193,6 +198,16 @@ Return output file name."
              ;; :html-head-include-default-style	org-html-head-include-default-style
              ;; :html-head-include-scripts	org-html-head-include-scripts
              ;; :html-head	org-html-head
+             :html-head	,(concat "<link rel=\"shortcut icon\" href=\"/images/rose-red.png\"
+type=\"image/x-icon\" />"
+                                 "<link rel=\"stylesheet\" href=\"/css/animate.min.css\" />"
+			                     "<link rel=\"stylesheet\" href=\"/css/all.min.css\" />"
+			                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/style.css\" />"
+			                     ""
+			                     "<script src=\"/js/jquery.min.js\"></script>"
+			                     "<script src=\"/js/darkreader.js\"></script>"
+			                     "<script src=\"/user.config.js\"></script>"
+			                     "<script src=\"/js/main.js\"></script>")
              ;; :html-home/up-format	org-html-home/up-format
              ;; :html-html5-fancy	org-html-html5-fancy
              ;; :html-indent	org-html-indent
@@ -207,8 +222,8 @@ Return output file name."
              ;; :html-mathjax-options	org-html-mathjax-options
              ;; :html-mathjax-template	org-html-mathjax-template
              ;; :html-metadata-timestamp-format	org-html-metadata-timestamp-format
-             ;; :html-postamble-format t ;; org-html-postamble-format
-             ;; :html-postamble t ;; org-html-postamble
+             ;; :html-postamble-format  org-html-postamble-format
+             :html-postamble org-blogs-postamble ;; org-html-postamble
              ;; :html-preamble-format	org-html-preamble-format
              ;; :html-preamble nil ;; org-html-preamble
              ;; :html-self-link-headlines	org-html-self-link-headlines
