@@ -88,14 +88,35 @@
                       (org-blogs-generate-post-path filename) default)))
     out-dir))
 
+(defun schspa/parent-directory (dir)
+  (if dir (unless (equal "/" dir)
+			(file-name-directory (directory-file-name dir)))
+	"."))
+
+(defun schspa/copy-file (from to)
+  "copy file and make directory automaticly"
+  (make-directory (schspa/parent-directory to) t)
+  (copy-file from to t t))
+
 (defun schspa/org-html-link (orig-fun &rest args)
   (if (string-equal "file" (org-element-property :type (car args)))
 	  (let* ((raw-path (org-element-property :path (car args)))
+             (is-org (string-suffix-p ".org" raw-path))
+             (base-path)
              (output-path
-              (concat
-               (org-blogs-generate-post-link-path (expand-file-name raw-path))
-               (file-name-nondirectory raw-path))))
-        (org-element-put-property (car args) :path output-path))
+              (if is-org (concat
+                          (org-blogs-generate-post-link-path (expand-file-name raw-path))
+                          (file-name-nondirectory raw-path))
+                (setq base-path (org-blogs-generate-post-link-path buffer-file-name))
+                (concat "asserts/" (file-name-nondirectory raw-path)))
+              ))
+        (org-element-put-property (car args) :path output-path)
+        (if is-org
+            (org-element-put-property (car args) :path output-path)
+          (message "copy from %s to %s" raw-path (concat "~/site/public/" base-path output-path))
+          (schspa/copy-file raw-path (concat "~/site/public/" base-path output-path))
+          (org-element-put-property (car args) :path output-path))
+        )
     )
   (apply orig-fun args))
 
