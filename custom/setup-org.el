@@ -112,7 +112,7 @@
 (use-package org-download
   :ensure t
   :config
-  (setq-default org-download-image-dir "~/org/pic")
+  (setq-default org-download-image-dir "~/Sync/org/pic")
   (setq-default org-download-display-inline-images t)
   (setq-default org-download-heading-lvl nil)
   (if (equal system-type 'darwin)
