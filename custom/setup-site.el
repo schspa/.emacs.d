@@ -144,6 +144,11 @@ Return output file name."
       (dolist (postamblefile files) (insert-file-contents postamblefile)))
     (buffer-string)))
 
+(defun org-blogs-preamble (info)
+  (with-temp-buffer
+    (insert-file-contents "~/site/assets/preamble.html")
+    (buffer-string)))
+
 (eval-after-load 'ox-publish
   ;; org-publish-project-alist
   ;; ("project-name" :property value :property value ...)
@@ -219,16 +224,7 @@ Return output file name."
              ;; :html-head-include-default-style	org-html-head-include-default-style
              ;; :html-head-include-scripts	org-html-head-include-scripts
              ;; :html-head	org-html-head
-             :html-head	,(concat "<link rel=\"shortcut icon\" href=\"/images/rose-red.png\"
-type=\"image/x-icon\" />"
-                                 "<link rel=\"stylesheet\" href=\"/css/animate.min.css\" />"
-			                     "<link rel=\"stylesheet\" href=\"/css/all.min.css\" />"
-			                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/style.css\" />"
-			                     ""
-			                     "<script src=\"/js/jquery.min.js\"></script>"
-			                     "<script src=\"/js/darkreader.js\"></script>"
-			                     "<script src=\"/user.config.js\"></script>"
-			                     "<script src=\"/js/main.js\"></script>")
+             :html-head	,(org-file-contents "~/site/assets/header.html")
              ;; :html-home/up-format	org-html-home/up-format
              ;; :html-html5-fancy	org-html-html5-fancy
              ;; :html-indent	org-html-indent
@@ -246,7 +242,7 @@ type=\"image/x-icon\" />"
              ;; :html-postamble-format  org-html-postamble-format
              :html-postamble org-blogs-postamble ;; org-html-postamble
              ;; :html-preamble-format	org-html-preamble-format
-             ;; :html-preamble nil ;; org-html-preamble
+             :html-preamble org-blogs-preamble ;; org-html-preamble
              ;; :html-self-link-headlines	org-html-self-link-headlines
              ;; :html-table-align-individual-field	de{org-html-table-align-individual-fields
              ;; :html-table-attributes	org-html-table-default-attributes
