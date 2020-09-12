@@ -88,6 +88,11 @@
                       (org-blogs-generate-post-path filename) default)))
     out-dir))
 
+(defun org-blog-get-out-path (filename default)
+  (let (path)
+    (setq path (org-blog-get-out-dir filename nil))
+    (if path (concat path (file-name-nondirectory filename)) default)))
+
 (defun schspa/parent-directory (dir)
   (if dir (unless (equal "/" dir)
 			(file-name-directory (directory-file-name dir)))
@@ -104,9 +109,7 @@
              (is-org (string-suffix-p ".org" raw-path))
              (base-path)
              (output-path
-              (if is-org (concat
-                          (org-blogs-generate-post-link-path (expand-file-name raw-path))
-                          (file-name-nondirectory raw-path))
+              (if is-org (org-blog-get-out-path raw-path raw-path)
                 (setq base-path (org-blogs-generate-post-link-path buffer-file-name))
                 (concat "asserts/" (file-name-nondirectory raw-path)))
               ))
