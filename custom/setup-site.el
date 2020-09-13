@@ -91,7 +91,9 @@
 (defun org-blog-get-out-path (filename default)
   (let (path)
     (setq path (org-blog-get-out-dir filename nil))
-    (if path (concat path (file-name-nondirectory filename)) default)))
+    (if path
+        (concat (file-relative-name path "~/site/public")
+                (file-name-nondirectory filename)) default)))
 
 (defun schspa/parent-directory (dir)
   (if dir (unless (equal "/" dir)
@@ -152,6 +154,27 @@ Return output file name."
     (insert-file-contents "~/site/assets/preamble.html")
     (buffer-string)))
 
+(defun org-blogs-sitemap-entry (entry style project)
+  "Default format for site map ENTRY, as a string.
+ENTRY is a file name.  STYLE is the style of the sitemap.
+PROJECT is the current project."
+  (cond ((not (directory-name-p entry))
+	     (format "[[file:%s][%s]]"
+		         entry
+		         (org-publish-find-title entry project)))
+	    ((eq style 'tree)
+	     ;; Return only last subdir.
+	     (file-name-nondirectory (directory-file-name entry)))
+	    (t nil)))
+
+(defun org-blogs-sitemap (title list)
+  "Default site map, as a string.
+TITLE is the title of the site map.  LIST is an internal
+representation for the files to include, as returned by
+`org-list-to-lisp'.  PROJECT is the current project."
+  (concat "#+TITLE: " title "\n\n"
+	      (org-list-to-org (remove (list nil) list))))
+
 (eval-after-load 'ox-publish
   ;; org-publish-project-alist
   ;; ("project-name" :property value :property value ...)
@@ -162,6 +185,13 @@ Return output file name."
              ;; ; Sources and destinations for files.
              :base-directory "~/org/blogs/"  ;; local dir
              :publishing-directory "~/site/public/" ;; :publishing-directory "/ssh:jack@192.112.245.112:~/site/public/"
+
+             :auto-sitemap t
+             :sitemap-function org-blogs-sitemap
+             :sitemap-sort-folders ,'first
+             :sitemap-style ,'list
+             :sitemap-format-entry org-blogs-sitemap-entry
+
              ;; :preparation-function
              ;; :complete-function
 
