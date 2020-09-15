@@ -4,3 +4,7 @@
 [submodule "git/org-static-blog"]
 	path = git/org-static-blog
 	url = git@github.com:schspa/org-static-blog.git
+[submodule "site"]
+	path = site
+	url = git@github.com:schspa/site.git
+	branch = master

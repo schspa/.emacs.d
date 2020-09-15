@@ -59,8 +59,20 @@
 (defun org-blogs-generate-post-link-path (post-filename)
   (format-time-string "%Y/%m/%d/" (org-blogs-get-date post-filename)))
 
+(defcustom org-blogs-site-path
+  (expand-file-name "site" user-emacs-directory)
+  "Path to drawio.cli executable."
+  :group 'org-babel
+  :type 'string)
+
+(defcustom org-blogs-output-path
+  (expand-file-name "sites" (getenv "HOME"))
+  "Path to drawio.cli executable."
+  :group 'org-babel
+  :type 'string)
+
 (defun org-blogs-generate-post-path (post-filename)
-  (concat "~/site/public/" (org-blogs-generate-post-link-path post-filename)))
+  (concat org-blogs-output-path "/" (org-blogs-generate-post-link-path post-filename)))
 
 (defun schspa/readlines (filePath)
   "Return a list for a file"
@@ -92,7 +104,7 @@
   (let (path)
     (setq path (org-blog-get-out-dir filename nil))
     (if path
-        (concat (file-relative-name path "~/site/public")
+        (concat (file-relative-name path org-blogs-output-path)
                 (file-name-nondirectory filename)) default)))
 
 (defun schspa/parent-directory (dir)
@@ -118,8 +130,8 @@
         (org-element-put-property (car args) :path output-path)
         (if is-org
             (org-element-put-property (car args) :path output-path)
-          (message "copy from %s to %s" raw-path (concat "~/site/public/" base-path output-path))
-          (schspa/copy-file raw-path (concat "~/site/public/" base-path output-path))
+          (message "copy from %s to %s" raw-path (concat org-blogs-output-path "/" base-path output-path))
+          (schspa/copy-file raw-path (concat org-blogs-output-path "/" base-path output-path))
           (org-element-put-property (car args) :path output-path))
         )
     )
@@ -144,14 +156,14 @@ Return output file name."
   (with-temp-buffer
     (let ((files '()))
       (unless (string-prefix-p "index." (plist-get info :input-buffer))
-        (add-to-list 'files "~/site/assets/postamble.html"))
-      (add-to-list 'files "~/site/assets/footer.html")
+        (add-to-list 'files (concat org-blogs-site-path "/assets/postamble.html")))
+      (add-to-list 'files (concat org-blogs-site-path "/assets/footer.html"))
       (dolist (postamblefile files) (insert-file-contents postamblefile)))
     (buffer-string)))
 
 (defun org-blogs-preamble (info)
   (with-temp-buffer
-    (insert-file-contents "~/site/assets/preamble.html")
+    (insert-file-contents (concat org-blogs-site-path "/assets/preamble.html"))
     (buffer-string)))
 
 (defun org-blogs-sitemap-entry (entry style project)
@@ -184,7 +196,8 @@ representation for the files to include, as returned by
           `(("orgfiles"
              ;; ; Sources and destinations for files.
              :base-directory "~/org/blogs/"  ;; local dir
-             :publishing-directory "~/site/public/" ;; :publishing-directory "/ssh:jack@192.112.245.112:~/site/public/"
+             :publishing-directory ,org-blogs-output-path
+             ;; :publishing-directory "/ssh:jack@192.112.245.112:~/site/public/"
 
              :auto-sitemap t
              :sitemap-function org-blogs-sitemap
@@ -257,7 +270,7 @@ representation for the files to include, as returned by
              ;; :html-head-include-default-style	org-html-head-include-default-style
              ;; :html-head-include-scripts	org-html-head-include-scripts
              ;; :html-head	org-html-head
-             :html-head	,(org-file-contents "~/site/assets/header.html")
+             :html-head	,(org-file-contents (concat org-blogs-site-path "/assets/header.html"))
              ;; :html-home/up-format	org-html-home/up-format
              ;; :html-html5-fancy	org-html-html5-fancy
              ;; :html-indent	org-html-indent
@@ -305,44 +318,44 @@ representation for the files to include, as returned by
              )
             ;; static assets
             ("js"
-             :base-directory "~/site/js/"
+             :base-directory ,(concat org-blogs-site-path "/js/")
              :base-extension "js"
-             :publishing-directory "~/site/public/js/"
+             :publishing-directory ,(concat org-blogs-output-path "/js/")
              :recursive t
              :publishing-function org-publish-attachment
              )
             ("conf"
-             :base-directory "~/site/"
+             :base-directory ,org-blogs-site-path
              :base-extension "js"
-             :publishing-directory "~/site/public/"
+             :publishing-directory ,org-blogs-output-path
              :recursive nil
              :publishing-function org-publish-attachment
              )
             ("css"
-             :base-directory "~/site/css/"
+             :base-directory ,(concat org-blogs-site-path "/css/")
              :base-extension "css"
-             :publishing-directory "~/site/public/css/"
+             :publishing-directory ,(concat org-blogs-output-path "/css/")
              :recursive t
              :publishing-function org-publish-attachment
              )
             ("images"
-             :base-directory "~/site/images/"
+             :base-directory ,(concat org-blogs-site-path "/images/")
              :base-extension "jpg\\|gif\\|png\\|svg\\|gif"
-             :publishing-directory "~/site/public/images/"
+             :publishing-directory ,(concat org-blogs-output-path "/images/")
              :recursive t
              :publishing-function org-publish-attachment
              )
             ("assets"
-             :base-directory "~/site/assets/"
+             :base-directory ,(concat org-blogs-site-path "/assets/")
              :base-extension "mp3"
-             :publishing-directory "~/site/public/assets/"
+             :publishing-directory ,(concat org-blogs-output-path "/assets/")
              :recursive t
              :publishing-function org-publish-attachment
              )
             ("webfonts"
-             :base-directory "~/site/webfonts/"
+             :base-directory ,(concat org-blogs-site-path "/webfonts/")
              :base-extension "eot\\|svg\\|ttf\\|woff\\|woff2"
-             :publishing-directory "~/site/public/webfonts/"
+             :publishing-directory ,(concat org-blogs-output-path "/webfonts/")
              :recursive t
              :publishing-function org-publish-attachment
              )
@@ -376,7 +389,7 @@ representation for the files to include, as returned by
   (interactive)
   (when (yes-or-no-p "Really delete current org and the relative html?")
 
-    (let ((fileurl (concat "~/site/public/" (file-name-base (buffer-name)) ".html")))
+    (let ((fileurl (concat org-blogs-site-path "/" (file-name-base (buffer-name)) ".html")))
       (if (file-exists-p fileurl)
           (delete-file fileurl))
       (delete-file (buffer-file-name))
@@ -388,7 +401,7 @@ representation for the files to include, as returned by
   (interactive)
   (when (yes-or-no-p "Really delete the relative html?")
 
-    (let ((fileurl (concat "~/site/public/" (file-name-base (buffer-name)) ".html")))
+    (let ((fileurl (concat org-blogs-output-path "/" (file-name-base (buffer-name)) ".html")))
       (if (file-exists-p fileurl)
           (progn
             (delete-file fileurl)
@@ -413,7 +426,7 @@ representation for the files to include, as returned by
 (use-package simple-httpd
   :ensure t
   :config
-  (setq httpd-root "~/site/public"))
+  (setq httpd-root org-blogs-output-path))
 
 (defun preview-current-buffer-in-browser ()
   "Open current buffer as html."
