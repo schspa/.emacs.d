@@ -93,7 +93,7 @@
   (when (display-graphic-p)
     ;; Set default font
     (catch 'loop
-      (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Monaco" "SF Mono" "Hack" "Source Code Pro" "Fira Code"
+      (dolist (font '("DejaVu Sans Mono" "Monaco" "SF Mono" "Hack" "Source Code Pro" "Fira Code"
                       "Menlo" "DejaVu Sans Mono" "Consolas"))
         (when (member font (font-family-list))
           (set-face-attribute 'default nil :font font)
@@ -101,16 +101,17 @@
 
     ;; Specify font for all unicode characters
     (catch 'loop
-      (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Symbola" "Apple Symbols" "Symbol"))
+      (dolist (font '("Symbola" "Apple Symbols" "Symbol"))
         (when (member font (font-family-list))
           (set-fontset-font t 'unicode font nil 'prepend)
           (throw 'loop t))))
 
     ;; Specify font for Chinese characters
     (catch 'loop
-      (dolist (font '("Inconsolata for Powerline" "DejaVu Sans Mono" "Noto Sans Mono" "WenQuanYi Micro Hei" "Microsoft Yahei"))
+      (dolist (font '("PingFang SC" "WenQuanYi Micro Hei" "Microsoft Yahei"))
         (when (member font (font-family-list))
           (set-fontset-font t '(#x4e00 . #x9fff) font)
+          (message font)
           (throw 'loop t))))))
 
 (use-package doom-themes
