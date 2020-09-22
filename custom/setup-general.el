@@ -158,4 +158,7 @@
   (setq calendar-holidays
         (append cal-china-x-important-holidays)))
 
+(use-package nov
+  :mode ("\\.epub\\'" . nov-mode))
+
 (provide 'setup-general)
