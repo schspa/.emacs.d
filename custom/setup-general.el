@@ -158,6 +158,16 @@
   (setq calendar-holidays
         (append cal-china-x-important-holidays)))
 
+;; 强大的字符跳转工具
+(use-package avy
+  :ensure t
+  :bind (("M-g :" . 'avy-goto-char)
+         ("M-g '" . 'avy-goto-char-2)
+         ("M-g \"" . 'avy-goto-char-timer)
+         ("M-g f" . 'avy-goto-line)
+         ("M-g w" . 'avy-goto-word-1)
+         ("M-g e" . 'avy-goto-word-0)))
+
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode))
 
