@@ -39,9 +39,9 @@
      (:include
       (:blacklist
        ["^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
-        "^/usr/(local/)?include/c\\+\\+/v1/"
-        ]))))
-  )
+        "^/usr/(local/)?include/c\\+\\+/v1/"]))
+     :cache (:directory "/tmp/ccls-cache"))))
+
 (use-package lsp-java
   :ensure t)
 
