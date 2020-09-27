@@ -53,10 +53,9 @@
 (setq mac-command-modifier 'meta)
 
 ;; Find Executable Path on OS X
-(when (featurep 'cocoa)
+(when (eq system-type 'darwin)
   (require 'exec-path-from-shell)
   (exec-path-from-shell-initialize))
-
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
