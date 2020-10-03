@@ -214,6 +214,15 @@
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
 ;; org-caldav
+(use-package org-caldav
+  :ensure t
+  :config
+  (setq org-caldav-files
+        (mapcar (lambda (x)
+                  (concat org-directory x))
+                '("gtd/homework.org" "gtd/tasks.org")))
+  (setq org-caldav-inbox (concat org-directory "gtd/inbox.org")))
+
 ;;set agenda files
 (provide 'setup-org)
 
