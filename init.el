@@ -66,6 +66,9 @@
 (setq quelpa-self-upgrade-p nil)
 (require 'quelpa)
 
+(defvar my-cache-dir (concat user-emacs-directory ".cache")
+  "My cache directory")
+
 (require 'quelpa-use-package)
 (quelpa-use-package-activate-advice)
 

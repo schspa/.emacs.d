@@ -209,6 +209,11 @@
 ;;information added to property when a subtree is moved
 (setq org-archive-save-context-info '(time file ltags itags todo category olpath))
 
+;; latex settings
+(setq-default org-preview-latex-image-directory (concat my-cache-dir "/org-latex"))
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+
+;; org-caldav
 ;;set agenda files
 (provide 'setup-org)
 
