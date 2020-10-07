@@ -223,9 +223,10 @@
 ;; we need entry argument, so this function is a goog choice.
 (defun org-gdt-icalendar--valarm (orig-fun &rest args)
   "Add needed URL entry for icalendar"
-  (format "%s\n%s"
-          (concat "URL:org-protocol://gdt?id=" (org-element-property :ID (car args)) "\n")
-          (apply orig-fun args)))
+  (let ((valarms (apply orig-fun args)))
+    (concat
+     "URL:org-protocol://gdt?id=" (org-element-property :ID (car args)) "\n"
+     (if valarms valarms ""))))
 
 (eval-after-load 'ox-icalendar
   (progn
