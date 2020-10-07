@@ -64,10 +64,6 @@
 (recentf-mode t)
 (setq-default recentf-max-menu-item 200)
 
-(if (file-directory-p "~/org") (setq org-agenda-files '("~/org")))
-
-(global-set-key (kbd "C-c a") 'org-agenda)
-
 (require 'tramp)
 (setq tramp-terminal-type "tramp")
 (setq tramp-default-method "ssh")

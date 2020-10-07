@@ -166,6 +166,11 @@
 ;;Setting for gtd captures
 ;;Directory for capture files.
 (setq org-directory "~/org/")
+(let ((dir (expand-file-name org-directory)))
+  (if dir (setq org-agenda-files (directory-files-recursively dir "org$"))))
+
+(global-set-key (kbd "C-c a") 'org-agenda)
+
 ;;Default capture files.
 (setq org-default-notes-file (concat org-directory "gtd/inbox.org"))
 ;;Capture template
@@ -213,6 +218,23 @@
 (setq-default org-preview-latex-image-directory (concat my-cache-dir "/org-latex"))
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
+;; setup icalendar
+;; advice to org-icalendar--valarm
+;; we need entry argument, so this function is a goog choice.
+(defun org-gdt-icalendar--valarm (orig-fun &rest args)
+  "Add needed URL entry for icalendar"
+  (format "%s\n%s"
+          (concat "URL:org-protocol://gdt?id=" (org-element-property :ID (car args)) "\n")
+          (apply orig-fun args)))
+
+(eval-after-load 'ox-icalendar
+  (progn
+    (setq org-icalendar-include-todo t
+          org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due event-if-todo-not-done)
+          org-icalendar-use-scheduled '(event-if-todo event-if-not-todo todo-start event-if-todo-not-done)
+          org-icalendar-with-timestamps t)
+    (advice-add 'org-icalendar--valarm :around #'org-gdt-icalendar--valarm)))
+
 ;; org-caldav
 (use-package org-caldav
   :ensure t
@@ -222,6 +244,22 @@
                   (concat org-directory x))
                 '("gtd/homework.org" "gtd/tasks.org")))
   (setq org-caldav-inbox (concat org-directory "gtd/inbox.org")))
+
+(require 'org-protocol)
+
+(defun org-gdt-protocol-open (info)
+  "This handler simply opens the file with emacsclient.
+INFO is an alist containing additional information passed by the protocol URL.
+It should contain the id key, pointing to the ID property for a org file to open.
+  Example protocol string:
+org-protocol://gdt?id=CBEC8DD1-7814-44A7-AA3D-97AEC35B6DB7"
+  (when-let ((id (plist-get info :id)))
+    (raise-frame)
+    (org-open-link-from-string (format "id:%s" id)))
+  nil)
+
+(push '("org-gdt-ref"  :protocol "gdt"   :function org-gdt-protocol-open)
+      org-protocol-protocol-alist)
 
 ;;set agenda files
 (provide 'setup-org)
