@@ -235,14 +235,28 @@
           org-icalendar-with-timestamps t)
     (advice-add 'org-icalendar--valarm :around #'org-gdt-icalendar--valarm)))
 
+(setenv "GPG_AGENT_INFO" nil)
+(require 'password-cache)
+(require 'epa-file)
+(epa-file-enable)
+(setq password-cache-expiry (* 15 60))
+(setq epa-file-cache-passphrase-for-symmetric-encryption t)
+(setq epa-pinentry-mode 'loopback)
+(setq auth-source-debug nil)
+
 ;; org-caldav
 (use-package org-caldav
   :ensure t
   :config
-  (setq org-caldav-files
-        (mapcar (lambda (x)
-                  (concat org-directory x))
-                '("gtd/homework.org" "gtd/tasks.org")))
+  (unless (file-exists-p (concat my-cache-dir "/org-caldav/"))
+    (make-directory (concat my-cache-dir "/org-caldav/")))
+  (setq
+   org-caldav-save-directory (concat my-cache-dir "/org-caldav/")
+   org-caldav-backup-file (concat my-cache-dir "/org-caldav-backup.org")
+   org-caldav-show-sync-results 'nil
+   org-caldav-files (mapcar (lambda (x)
+                              (concat org-directory x))
+                            '("gtd/tasks.org")))
   (setq org-caldav-inbox (concat org-directory "gtd/inbox.org")))
 
 (require 'org-protocol)
@@ -260,6 +274,17 @@ org-protocol://gdt?id=CBEC8DD1-7814-44A7-AA3D-97AEC35B6DB7"
 
 (push '("org-gdt-ref"  :protocol "gdt"   :function org-gdt-protocol-open)
       org-protocol-protocol-alist)
+
+(setq org-protocol-project-alist
+      '(("http://schspa.tk/"
+         :base-url "http://schspa.tk/"
+         :working-directory "/Users/schspa/org/blogs/"
+         :online-suffix ".html"
+         :working-suffix ".org"
+         :rewrites (("org/?$" . "index.php")))
+        ("org"
+         :base-url "org/"
+         :working-directory "~/org/")))
 
 ;;set agenda files
 (provide 'setup-org)
