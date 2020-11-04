@@ -108,6 +108,10 @@
 
 (use-package ivy-rich
   :ensure t
+  :custom
+  (ivy-rich-parse-remote-buffer nil)
+  (ivy-rich-parse-remote-file-path nil)
+  (ivy-rich-path-style (quote full))
   :config
   (setq ivy-rich-path-style 'abbrev
         ivy-rich-display-transformers-list
