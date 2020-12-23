@@ -118,3 +118,4 @@
 (require 'setup-telegram)
 (require 'setup-mail)
 (require 'setup-vterm)
+(put 'magit-clean 'disabled nil)
