@@ -66,6 +66,13 @@
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   (global-flycheck-mode t))
 
+(use-package dtb-mode
+  :quelpa
+  (dtb-mode :fetcher github
+            :repo "schspa/dtb-mode")
+  :ensure t
+  )
+
 (provide 'setup-prog)
 
 ;; Local Variables:
