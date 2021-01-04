@@ -99,13 +99,6 @@
   :init
   (counsel-projectile-mode))
 
-(use-package ivy-posframe
-  :after counsel ivy
-  :init
-  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
-  (require 'ivy-posframe)
-  (ivy-posframe-mode 1))
-
 (use-package ivy-rich
   :ensure t
   :custom
