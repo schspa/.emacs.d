@@ -24,6 +24,7 @@
 
 ;;; Code:
 
+(require 'org)
 (defun schspa/org-confirm-babel-evaluate (lang body)
   ;; org babel evaluate whitelist
   (let* ((whitelist-languages '("latex" "dot" "mermaid" "ditaa" "drawio" "plantuml")))
