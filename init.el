@@ -117,5 +117,6 @@
 (require 'setup-site)
 (require 'setup-telegram)
 (require 'setup-mail)
+(require 'setup-pdms)
 (require 'setup-vterm)
 (put 'magit-clean 'disabled nil)
