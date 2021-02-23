@@ -30,8 +30,6 @@
 					  android-mode
 		              anaconda-mode
 					  company-c-headers
-                      quelpa
-                      quelpa-use-package
 					  ) "Default packages")
 
 (setq package-selected-packages my/packages)
@@ -63,15 +61,23 @@
   (package-install 'use-package))
 (setq-default use-package-always-ensure t)
 
-(setq quelpa-update-melpa-p nil)
-(setq quelpa-self-upgrade-p nil)
-(require 'quelpa)
-
-(defvar my-cache-dir (concat user-emacs-directory ".cache")
+(defvar my-cache-dir (expand-file-name ".cache" user-emacs-directory)
   "My cache directory")
 
-(require 'quelpa-use-package)
-(quelpa-use-package-activate-advice)
+(use-package quelpa
+  :ensure t
+  :init
+  (ignore-errors (make-directory (expand-file-name "quelpa" my-cache-dir)))
+  :custom
+  (quelpa-dir (expand-file-name "quelpa" my-cache-dir))
+  (quelpa-update-melpa-p nil)
+  (quelpa-self-upgrade-p nil))
+
+(use-package quelpa-use-package
+  :ensure t
+  :after quelpa
+  :config
+  (quelpa-use-package-activate-advice))
 
 (use-package el-get
   :ensure t
