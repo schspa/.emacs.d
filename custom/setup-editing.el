@@ -28,12 +28,14 @@
   :quelpa (rime :fetcher github
                 :repo "DogLooksGood/emacs-rime"
                 :files ("*.el" "Makefile" "lib.c"))
+  :if (getenv "SSH_CONNECTION")
   :custom
   (rime-show-candidate 'posframe)
   (default-input-method "rime")
   :bind
   (:map rime-mode-map
-        ("C-`" . 'rime-send-keybinding)))
+        ("C-`" . 'rime-send-keybinding)
+        ("C-\\" . 'rime-inline-ascii)))
 
 ;;(setq use-package-ensure-function 'quelpa)
 (quelpa-use-package-activate-advice)
@@ -42,6 +44,7 @@
   :quelpa
   (sis :fetcher github
        :repo "laishulu/emacs-smart-input-source")
+  :if (not (getenv "SSH_CONNECTION"))
   :config
   (if sys/macp
       (sis-ism-lazyman-config
