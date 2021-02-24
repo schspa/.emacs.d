@@ -124,7 +124,7 @@
 
 (let ((font "Sarasa Mono SC"))
   (when (member font (font-family-list))
-    (set-face-attribute 'org-table  nil  :font "Sarasa Mono SC")))
+    (set-face-attribute 'org-table nil :family "Sarasa Mono SC")))
 
 ;; GTD
 (use-package org-gtd
