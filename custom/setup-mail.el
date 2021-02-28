@@ -22,26 +22,29 @@
 ;;
 
 ;;; Code:
+(require 'json)
 
 ;; Set work email with fellowing elisp code.
 ;; (secrets-create-item
 ;;  (secrets-get-alias "default")
-;;  "work-mail" "password"
-;;  :service "email"
-;;  :user-full-name "Zhaohui Shi"
-;;  :username "zhaohui.shi"
-;;  :host "mail.domain.com"
-;;  :user-mail-address "zhaohui.shi@domain.com"
-;;  :maildir "^/work"
-;;  :get-mail-command "offlineimap -a work")
+;;  "email configuration for work"
+;;  (json-serialize '((:user-full-name . "zhaohui.shi")
+;;                    (:password . "xxx")
+;;                    (:username . "zhaohui.shi")
+;;                    (:host . "mail.domain.com")
+;;                    (:user-mail-address . "zhaohui.shi@domain.com")
+;;                    (:maildir . "^/work")
+;;                    (:get-mail-command . "offlineimap -a work")))
+;;  :service "email-conf"
+;;  :username "work")
 
-(defun get-mail-conf (service attribute)
+(defun get-mail-conf (user attribute)
   "Get email configuration for system keyring"
-  (let* (
-         (collect (secrets-get-alias "default"))
-         (item (car (secrets-search-items collect :service service))))
-    (if (equal attribute :password) (secrets-get-secret collect item)
-      (secrets-get-attribute collect item attribute))))
+  (let* ((collect (secrets-get-alias "default"))
+         (item (car (secrets-search-items collect :service "email-conf" :username user)))
+         (json-string (secrets-get-secret collect item))
+         (mail-conf (json-parse-string json-string :object-type 'alist)))
+    (cdr (assoc attribute mail-conf))))
 
 (use-package mu4e
   :load-path "/usr/share/emacs/site-lisp/mu4e"
@@ -61,7 +64,7 @@
 		             ( user-full-name	     . "Schspa Shi" )
                      ( mu4e-get-mail-command . "proxychains offlineimap -a gmail")))
            ))
-  (when (get-mail-conf "email" :maildir)
+  (when (get-mail-conf "work" :maildir)
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
                   :name "work"
@@ -72,15 +75,15 @@
                                 (when msg
                                   (mu4e-message-contact-field-matches
                                    msg
-                                   :maildir (get-mail-conf "email" :maildir))))
+                                   :maildir (get-mail-conf "work" :maildir))))
                   :vars
-                  `(( user-mail-address       . ,(get-mail-conf "email" :user-mail-address))
-                    ( user-full-name          . ,(get-mail-conf "email" :user-full-name))
+                  `(( user-mail-address       . ,(get-mail-conf "work" :user-mail-address))
+                    ( user-full-name          . ,(get-mail-conf "work" :user-full-name))
                     ( mu4e-compose-signature  . ,(concat
-                                                  (get-mail-conf "email" :user-full-name)
+                                                  (get-mail-conf "work" :user-full-name)
                                                   "\n"
                                                   "BRs\n"))
-                    ( mu4e-get-mail-command   . ,(get-mail-conf "email" :get-mail-command))))))
+                    ( mu4e-get-mail-command   . ,(get-mail-conf "work" :get-mail-command))))))
   )
 
 (provide 'setup-mail)
