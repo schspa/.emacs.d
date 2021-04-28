@@ -45,11 +45,11 @@
 (use-package lsp-java
   :ensure t)
 
-(use-package lsp-python-ms
-  :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-python-ms)
-                         (lsp))))  ; or lsp-deferred
+(use-package lsp-pyright
+  :hook (python-mode . (lambda () (require 'lsp-pyright)))
+  :init (when (executable-find "python3")
+          (setq lsp-pyright-python-executable-cmd "python3")))
+
 (use-package lsp-mode
   :commands lsp
   :init
@@ -65,7 +65,7 @@
 									 (lsp)))
 								  ((derived-mode-p 'python-mode)
 								   (progn
-									 (require 'lsp-python-ms)
+									 (require 'lsp-pyright)
 									 (lsp)))
 								  ((derived-mode-p 'java-mode)
 								   (progn
@@ -77,12 +77,6 @@
   :ensure t
   :config
   :hook (lsp-mode . lsp-ui-mode))
-
-;;pip install python-language-server
-(use-package company-lsp
-  :ensure t
-  :config
-  (push 'company-lsp company-backends))
 
 ;; dap mode
 (use-package dap-mode
