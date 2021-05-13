@@ -45,11 +45,14 @@
 (use-package lsp-java
   :ensure t)
 
-(use-package lsp-pyright
-  :hook (python-mode . (lambda () (require 'lsp-pyright)))
-  :init (when (executable-find "python3")
-          (setq lsp-pyright-python-executable-cmd "python3")))
-
+(use-package lsp-python-ms
+  :ensure t
+  :init
+  (when (executable-find "python3")
+    (setq lsp-python-ms-python-executable-cmd "python3"))
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-python-ms)
+                         (lsp))))  ; or lsp-deferred
 (use-package lsp-mode
   :commands lsp
   :init
@@ -65,7 +68,7 @@
 									 (lsp)))
 								  ((derived-mode-p 'python-mode)
 								   (progn
-									 (require 'lsp-pyright)
+									 (require 'lsp-python-ms)
 									 (lsp)))
 								  ((derived-mode-p 'java-mode)
 								   (progn
