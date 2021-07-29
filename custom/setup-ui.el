@@ -23,7 +23,7 @@
 ;;
 
 ;;; Code:
-(when (not sys/mac-x-p)
+(unless sys/mac-x-p
   (menu-bar-mode 0))
 (tool-bar-mode 0)
 (column-number-mode)
@@ -36,7 +36,7 @@
   (global-display-line-numbers-mode t))
 
 (defun hidden-dos-eol ()
-  "Do not show ^M in files containing mixed UNIX and DOS line              endings."
+  "Do not show ^M in files containing mixed UNIX and DOS line endings."
   (interactive)
   (unless buffer-display-table
     (setq buffer-display-table (make-display-table)))

@@ -8,53 +8,46 @@
 ;; cl - Common Lisp Extension
 (require 'cl)
 
-;; Add Packages
-(defvar my/packages '(
-		              ;; --- Auto-completion ---
-		              company
-		              ;; --- Better Editor ---
-		              hungry-delete
-		              swiper
-		              counsel
-		              smartparens
-		              ;; --- Major Mode ---
-		              js2-mode
-		              ;; --- Minor Mode ---
-		              nodejs-repl
-		              exec-path-from-shell
-		              ;; --- Themes ---
-		              ;; solarized-theme
-                      ;; smart-mode-line
-                      validate
-                      dracula-theme
-					  android-mode
-		              anaconda-mode
-					  company-c-headers
-					  ) "Default packages")
-
-(setq package-selected-packages my/packages)
+(setq package-selected-packages
+      '(
+        ;; --- Auto-completion ---
+        company
+        ;; --- Better Editor ---
+        hungry-delete
+        swiper
+        counsel
+        smartparens
+        ;; --- Major Mode ---
+        js2-mode
+        ;; --- Minor Mode ---
+        nodejs-repl
+        exec-path-from-shell
+        ;; --- Themes ---
+        ;; solarized-theme
+        ;; smart-mode-line
+        validate
+        dracula-theme
+        android-mode
+        anaconda-mode
+        company-c-headers
+        ))
 
 (defun my/packages-installed-p ()
-  (loop for pkg in my/packages
+  (loop for pkg in package-selected-packages
 	    when (not (package-installed-p pkg)) do (return nil)
 	    finally (return t)))
 
 (unless (my/packages-installed-p)
   (message "%s" "Refreshing package database...")
   (package-refresh-contents)
-  (dolist (pkg my/packages)
-    (when (not (package-installed-p pkg))
-	  (package-install pkg))))
-
-;; Map Alt key to Meta
-(setq x-alt-keysym 'meta)
-(setq mac-option-modifier 'hyper)
-(setq mac-command-modifier 'meta)
+  (call-interactively #'package-install-selected-packages))
 
 ;; Find Executable Path on OS X
 (when (eq system-type 'darwin)
   (require 'exec-path-from-shell)
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  (setq mac-option-modifier 'hyper)
+  (setq mac-command-modifier 'meta))
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
