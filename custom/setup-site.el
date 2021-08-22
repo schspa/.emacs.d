@@ -85,13 +85,29 @@
   :group 'schspa
   :type 'string)
 
+(defun schspa/get-org-filetags (file)
+  (with-temp-buffer
+    (let ((delay-mode-hooks (org-mode)))
+      (insert-file-contents file)
+      (let ((tagstrings (cadr (assoc "FILETAGS" (org-collect-keywords '("filetags"))))))
+        (if tagstrings (split-string tagstrings ":" t) nil)))))
+
+(defcustom org-posts-file-regexp "\\`[^.].*\\.org\\'"
+  "Regular expression to match files for `org-agenda-files'.
+If any element in the list in that variable contains a directory instead
+of a normal file, all files in that directory that are matched by this
+regular expression will be included."
+  :group 'schspa
+  :type 'regexp)
+
+
 (defun schspa/getposts (filePath)
   "Return posts file name"
-  (seq-filter 'file-readable-p
-			  (mapcar (lambda (arg)
-						(expand-file-name arg schspa/blog-source-dir))
-					  (schspa/readlines
-					   (expand-file-name filePath schspa/blog-source-dir)))))
+  (seq-filter (lambda (elt)
+                (let ((filetags (schspa/get-org-filetags elt)))
+                  (message "tags %S" filetags)
+                  (if filetags (member "blogs" filetags) nil)))
+              (directory-files-recursively filePath org-posts-file-regexp)))
 
 (defun org-blog-get-out-dir (filename default)
   (let* ((is-external-file
@@ -211,7 +227,7 @@ representation for the files to include, as returned by
              ;; ; Selecting files
              :base-extension "org"
              ;; :exclude "PrivatePage.org"     ;; regexp
-             :include ,(schspa/getposts "posts")
+             :include ,(schspa/getposts schspa/blog-source-dir)
              :recursive t
 
              ;; ; Publishing action
