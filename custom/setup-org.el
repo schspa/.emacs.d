@@ -117,7 +117,9 @@
   (setq-default org-download-display-inline-images t)
   (setq-default org-download-heading-lvl nil)
   (if (equal system-type 'darwin)
-      (setq org-download-screenshot-method "/usr/sbin/screencapture -i %s"))
+      (setq org-download-screenshot-method "/usr/sbin/screencapture -i %s")
+    (when (executable-find "flameshot")
+      org-download-screenshot-method "flameshot gui --raw > %s"))
   :hook
   ((dired-mode . org-download-enable)
    (org-mode . org-download-enable)))
