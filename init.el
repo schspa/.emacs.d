@@ -30,6 +30,7 @@
         android-mode
         anaconda-mode
         company-c-headers
+        restart-emacs
         ))
 
 (defun my/packages-installed-p ()
