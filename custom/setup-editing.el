@@ -46,12 +46,12 @@
        :repo "laishulu/emacs-smart-input-source")
   :if (not (getenv "SSH_CONNECTION"))
   :config
-  (if sys/macp
-      (sis-ism-lazyman-config
-       "com.apple.keylayout.ABC"
-       "im.rime.inputmethod.Squirrel.Rime")
-    (sis-ism-lazyman-config "xkb:us::eng" "rime"
-                            'ibus))
+  (cond (sys/macp (sis-ism-lazyman-config
+                   "com.apple.keylayout.ABC"
+                   "im.rime.inputmethod.Squirrel.Rime"))
+        ((string-equal (getenv "GTK_IM_MODULE") "fcitx")
+         (sis-ism-lazyman-config "1" "2" 'fcitx5))
+        ((t (sis-ism-lazyman-config "xkb:us::eng" "rime" 'ibus))))
 
   ;; enable the /cursor color/ mode
   (sis-global-cursor-color-mode t)
