@@ -371,4 +371,22 @@ Position the cursor at it's beginning, according to the current mode."
                       '("github.com" . markdown-mode)
                       '("emacs-china.org" . markdown-mode))))
 
+(use-package openwith
+  :ensure t
+  :config
+  (setq openwith-associations
+        (cond
+         ((string-equal system-type "darwin")
+          '(("\\.\\(dmg\\|doc\\|docs\\|xls\\|xlsx\\)$"
+             "open" (file))
+            ("\\.\\(mp4\\|mp3\\|webm\\|avi\\|flv\\|mov\\)$"
+             "open" ("-a" "VLC" file))))
+         ((string-equal system-type "gnu/linux")
+          '(("\\.\\(mp4\\|mp3\\|webm\\|avi\\|flv\\|mov\\)$"
+             "xdg-open" (file))))))
+  (add-to-list 'openwith-associations
+               '("\\.\\(drawio\\)$"
+                 "draw.io" (file)))
+  (openwith-mode +1))
+
 (provide 'setup-editing)
