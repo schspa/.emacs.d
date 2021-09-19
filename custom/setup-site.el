@@ -85,29 +85,6 @@
   :group 'schspa
   :type 'string)
 
-(defun schspa/get-org-filetags (file)
-  (with-temp-buffer
-    (let ((delay-mode-hooks (org-mode)))
-      (insert-file-contents file)
-      (let ((tagstrings (cadr (assoc "FILETAGS" (org-collect-keywords '("filetags"))))))
-        (if tagstrings (split-string tagstrings ":" t) nil)))))
-
-(defcustom org-posts-file-regexp "\\`[^.].*\\.org\\'"
-  "Regular expression to match files for `org-agenda-files'.
-If any element in the list in that variable contains a directory instead
-of a normal file, all files in that directory that are matched by this
-regular expression will be included."
-  :group 'schspa
-  :type 'regexp)
-
-
-(defun schspa/getposts (filePath)
-  "Return posts file name"
-  (seq-filter (lambda (elt)
-                (let ((filetags (schspa/get-org-filetags elt)))
-                  (message "tags %S" filetags)
-                  (if filetags (member "blogs" filetags) nil)))
-              (directory-files-recursively filePath org-posts-file-regexp)))
 
 (defun org-blog-get-out-dir (filename default)
   (let* ((is-external-file
@@ -122,6 +99,65 @@ regular expression will be included."
     (if path
         (concat (file-relative-name path org-blogs-output-path)
                 (file-name-nondirectory filename)) default)))
+
+(defun schspa/expandprops (props_alist &optional exclude-key)
+  "Expand props in tags, category.."
+  (seq-map (lambda (elt)
+             (let* ((key (car elt))
+                    (value (if (member key exclude-key) (cadr elt)
+                             (if (stringp (cadr elt)) (split-string (cadr elt) ":" t)
+                               (cadr elt)))))
+               (cons key value))) props_alist))
+
+(defun schspa/get-org-filetags (file)
+  (with-temp-buffer
+    (let ((delay-mode-hooks (org-mode)))
+      (insert-file-contents file)
+      (schspa/expandprops
+       (org-collect-keywords
+        '("category" "filetags" "title" "date")) '("TITLE" "DATE")))))
+
+(defcustom org-posts-file-regexp "\\`[^.].*\\.org\\'"
+  "Regular expression to match files for `org-agenda-files'.
+If any element in the list in that variable contains a directory instead
+of a normal file, all files in that directory that are matched by this
+regular expression will be included."
+  :group 'schspa
+  :type 'regexp)
+
+(defun schspa/getposts-info (filePath)
+  "Return posts file information"
+  (let ((my-posts ()))
+    (seq-filter
+     (lambda (elt)
+       (let* ((fileprops (schspa/get-org-filetags elt))
+              (filetags (alist-get "FILETAGS" fileprops '() nil 'equal))
+              (add-to-blogs (member "blogs" filetags)))
+         (if add-to-blogs
+             (progn
+               (message "Add %S to blogs" elt)
+               (setf (alist-get "URL" fileprops)
+                     (concat "/" (file-name-sans-extension
+                                  (org-blog-get-out-path elt elt))
+                             ".html")
+                     (alist-get :file-path fileprops) elt)
+               (add-to-list
+                'my-posts
+                fileprops)))
+         'add-to-blogs
+         ))
+     (directory-files-recursively filePath org-posts-file-regexp))
+    (write-region
+     (json-encode my-posts) nil
+     (expand-file-name "blogs.json" org-blogs-output-path))
+    my-posts))
+
+(defun schspa/getposts (filePath)
+  "Return file path sequence"
+  (seq-map
+   (lambda (elt)
+     (alist-get :file-path elt))
+   (schspa/getposts-info filePath)))
 
 (defun schspa/parent-directory (dir)
   (if dir (unless (equal "/" dir)
@@ -203,182 +239,185 @@ representation for the files to include, as returned by
   (concat "#+TITLE: " title "\n\n"
 	      (org-list-to-org (remove (list nil) list))))
 
+(defun update-site-publish-settings ()
+  "Update site publish settings"
+  (setq org-publish-project-alist
+        `(("orgfiles"
+           ;; ; Sources and destinations for files.
+           :base-directory "~/org/blogs/"  ;; local dir
+           :publishing-directory ,org-blogs-output-path
+           ;; :publishing-directory "/ssh:jack@192.112.245.112:~/site/public/"
+
+           :auto-sitemap t
+           :sitemap-function org-blogs-sitemap
+           :sitemap-sort-folders ,'first
+           :sitemap-style ,'list
+           :sitemap-format-entry org-blogs-sitemap-entry
+
+           ;; :preparation-function
+           ;; :complete-function
+
+           ;; ; Selecting files
+           :base-extension "org"
+           ;; :exclude "PrivatePage.org"     ;; regexp
+           :include ,(schspa/getposts schspa/blog-source-dir)
+           :recursive t
+
+           ;; ; Publishing action
+           :publishing-function org-html-publish-to-blogs
+
+           ;; :htmlized-source
+
+           ;; ;;; Options for the exporters
+
+           ;; ; Generic properties
+           ;; :archived-trees	org-export-with-archived-trees
+           ;; :exclude-tags	org-export-exclude-tags
+           :headline-levels 4 ;; org-export-headline-levels
+           ;; :language	org-export-default-language
+           ;; :preserve-breaks	org-export-preserve-breaks
+           :section-numbers nil	;; org-export-with-section-numbers
+           ;; :select-tags	org-export-select-tags
+           :with-author "Schspa" ;; org-export-with-author
+           ;; :with-broken-links	org-export-with-broken-links
+           ;; :with-clocks	t ;; org-export-with-clocks
+           ;; :with-creator nil ;; org-export-with-creator
+           ;; :with-date org-export-with-date
+           ;; :with-drawers	org-export-with-drawers
+           ;; :with-email	org-export-with-email
+           ;; :with-emphasize	org-export-with-emphasize
+           ;; :with-fixed-width org-export-with-fixed-width
+           ;; :with-footnotes	org-export-with-footnotes
+           ;; :with-latex	org-export-with-latex
+           ;; :with-planning	org-export-with-planning
+           :with-priority t ;; org-export-with-priority ;
+           ;; :with-properties	org-export-with-properties
+           ;; :with-special-strings	org-export-with-special-strings
+           ;; :with-sub-superscript	org-export-with-sub-superscripts
+           ;; :with-tables	org-export-with-tables
+           ;; :with-tags	org-export-with-tags
+           ;; :with-tasks	org-export-with-tasks
+           ;; :with-timestamps	org-export-with-timestamps
+           ;; :with-title	org-export-with-title
+           :with-toc t ;; org-export-with-toc
+           ;; :with-todo-keywords	org-export-with-todo-keywords
+
+           ;; ; HTML specific properties
+           ;; :html-allow-name-attribute-in-anchors	org-html-allow-name-attribute-in-anchors
+           ;; :html-checkbox-type	org-html-checkbox-type
+           ;; :html-container	org-html-container-element
+           ;; :html-divs	org-html-divs
+           :html-doctype "html5" ;; org-html-doctype
+           ;; :html-extension	org-html-extension
+           ;; :html-footnote-format nil ;; org-html-footnote-format
+           ;; :html-footnote-separator	org-html-footnote-separator
+           ;; :html-footnotes-section	org-html-footnotes-section
+           ;; :html-format-drawer-function	org-html-format-drawer-function
+           ;; :html-format-headline-function	org-html-format-headline-function
+           ;; :html-format-inlinetask-function	org-html-format-inlinetask-function
+           ;; :html-head-extra	org-html-head-extra
+           ;; :html-head-include-default-style	org-html-head-include-default-style
+           ;; :html-head-include-scripts	org-html-head-include-scripts
+           ;; :html-head	org-html-head
+           :html-head	,(org-file-contents (concat org-blogs-site-path "/assets/header.html"))
+           ;; :html-home/up-format	org-html-home/up-format
+           ;; :html-html5-fancy	org-html-html5-fancy
+           ;; :html-indent	org-html-indent
+           ;; :html-infojs-options	org-html-infojs-options
+           ;; :html-infojs-template	org-html-infojs-template
+           ;; :html-inline-image-rules	org-html-inline-image-rules
+           ;; :html-inline-images	org-html-inline-images
+           ;; :html-link-home	org-html-link-home
+           ;; :html-link-org-files-as-html	org-html-link-org-files-as-html
+           ;; :html-link-up	org-html-link-up
+           ;; :html-link-use-abs-url	org-html-link-use-abs-url
+           ;; :html-mathjax-options	org-html-mathjax-options
+           ;; :html-mathjax-template	org-html-mathjax-template
+           ;; :html-metadata-timestamp-format	org-html-metadata-timestamp-format
+           ;; :html-postamble-format  org-html-postamble-format
+           :html-postamble org-blogs-postamble ;; org-html-postamble
+           ;; :html-preamble-format	org-html-preamble-format
+           :html-preamble org-blogs-preamble ;; org-html-preamble
+           ;; :html-self-link-headlines	org-html-self-link-headlines
+           ;; :html-table-align-individual-field	de{org-html-table-align-individual-fields
+           ;; :html-table-attributes	org-html-table-default-attributes
+           ;; :html-table-caption-above	org-html-table-caption-above
+           ;; :html-table-data-tags	org-html-table-data-tags
+           ;; :html-table-header-tags	org-html-table-header-tags
+           ;; :html-table-row-tags	org-html-table-row-tags
+           ;; :html-table-use-header-tags-for-first-column	org-html-table-use-header-tags-for-first-column
+           ;; :html-tag-class-prefix	org-html-tag-class-prefix
+           ;; :html-text-markup-alist	org-html-text-markup-alist
+           ;; :html-todo-kwd-class-prefix	org-html-todo-kwd-class-prefix
+           ;; :html-toplevel-hlevel	org-html-toplevel-hlevel
+           ;; :html-use-infojs	org-html-use-infojs
+           ;; :html-validation-link	org-html-validation-link
+           ;; :html-viewport	org-html-viewport
+           ;; :html-wrap-src-lines	org-html-wrap-src-lines
+           ;; :html-xml-declaration	org-html-xml-declaration
+
+           ;; ; Markdown specific properties
+           ;; :md-footnote-format	org-md-footnote-format
+           ;; :md-footnotes-section	org-md-footnotes-section
+           ;; :md-headline-style	org-md-headline-style
+
+           ;; ; Other options
+           :table-of-contents t
+           ;; :style "<link rel=\"stylesheet\" href=\"../other/mystyle.css\" type=\"text/css\" />"
+           )
+          ;; static assets
+          ("js"
+           :base-directory ,(concat org-blogs-site-path "/js/")
+           :base-extension "js"
+           :publishing-directory ,(concat org-blogs-output-path "/js/")
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("conf"
+           :base-directory ,org-blogs-site-path
+           :base-extension "js"
+           :publishing-directory ,org-blogs-output-path
+           :recursive nil
+           :publishing-function org-publish-attachment
+           )
+          ("css"
+           :base-directory ,(concat org-blogs-site-path "/css/")
+           :base-extension "css"
+           :publishing-directory ,(concat org-blogs-output-path "/css/")
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("images"
+           :base-directory ,(concat org-blogs-site-path "/images/")
+           :base-extension "jpg\\|gif\\|png\\|svg\\|gif"
+           :publishing-directory ,(concat org-blogs-output-path "/images/")
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("assets"
+           :base-directory ,(concat org-blogs-site-path "/assets/")
+           :base-extension "mp3"
+           :publishing-directory ,(concat org-blogs-output-path "/assets/")
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+          ("webfonts"
+           :base-directory ,(concat org-blogs-site-path "/webfonts/")
+           :base-extension "eot\\|svg\\|ttf\\|woff\\|woff2"
+           :publishing-directory ,(concat org-blogs-output-path "/webfonts/")
+           :recursive t
+           :publishing-function org-publish-attachment
+           )
+
+          ("website" :components ("conf" "orgfiles" "js" "css" "images" "assets" "webfonts"))
+          ("statics" :components ("conf" "js" "css" "images" "assets" "webfonts"))
+          )))
+
 (eval-after-load 'ox-publish
   ;; org-publish-project-alist
   ;; ("project-name" :property value :property value ...)
   ;; ("project-name" :components ("project-name" "project-name" ...))
-  (lambda ()
-    (setq org-publish-project-alist
-          `(("orgfiles"
-             ;; ; Sources and destinations for files.
-             :base-directory "~/org/blogs/"  ;; local dir
-             :publishing-directory ,org-blogs-output-path
-             ;; :publishing-directory "/ssh:jack@192.112.245.112:~/site/public/"
-
-             :auto-sitemap t
-             :sitemap-function org-blogs-sitemap
-             :sitemap-sort-folders ,'first
-             :sitemap-style ,'list
-             :sitemap-format-entry org-blogs-sitemap-entry
-
-             ;; :preparation-function
-             ;; :complete-function
-
-             ;; ; Selecting files
-             :base-extension "org"
-             ;; :exclude "PrivatePage.org"     ;; regexp
-             :include ,(schspa/getposts schspa/blog-source-dir)
-             :recursive t
-
-             ;; ; Publishing action
-             :publishing-function org-html-publish-to-blogs
-
-             ;; :htmlized-source
-
-             ;; ;;; Options for the exporters
-
-             ;; ; Generic properties
-             ;; :archived-trees	org-export-with-archived-trees
-             ;; :exclude-tags	org-export-exclude-tags
-             :headline-levels 4 ;; org-export-headline-levels
-             ;; :language	org-export-default-language
-             ;; :preserve-breaks	org-export-preserve-breaks
-             :section-numbers nil	;; org-export-with-section-numbers
-             ;; :select-tags	org-export-select-tags
-             :with-author "Schspa" ;; org-export-with-author
-             ;; :with-broken-links	org-export-with-broken-links
-             ;; :with-clocks	t ;; org-export-with-clocks
-             ;; :with-creator nil ;; org-export-with-creator
-             ;; :with-date org-export-with-date
-             ;; :with-drawers	org-export-with-drawers
-             ;; :with-email	org-export-with-email
-             ;; :with-emphasize	org-export-with-emphasize
-             ;; :with-fixed-width org-export-with-fixed-width
-             ;; :with-footnotes	org-export-with-footnotes
-             ;; :with-latex	org-export-with-latex
-             ;; :with-planning	org-export-with-planning
-             :with-priority t ;; org-export-with-priority ;
-             ;; :with-properties	org-export-with-properties
-             ;; :with-special-strings	org-export-with-special-strings
-             ;; :with-sub-superscript	org-export-with-sub-superscripts
-             ;; :with-tables	org-export-with-tables
-             ;; :with-tags	org-export-with-tags
-             ;; :with-tasks	org-export-with-tasks
-             ;; :with-timestamps	org-export-with-timestamps
-             ;; :with-title	org-export-with-title
-             :with-toc t ;; org-export-with-toc
-             ;; :with-todo-keywords	org-export-with-todo-keywords
-
-             ;; ; HTML specific properties
-             ;; :html-allow-name-attribute-in-anchors	org-html-allow-name-attribute-in-anchors
-             ;; :html-checkbox-type	org-html-checkbox-type
-             ;; :html-container	org-html-container-element
-             ;; :html-divs	org-html-divs
-             :html-doctype "html5" ;; org-html-doctype
-             ;; :html-extension	org-html-extension
-             ;; :html-footnote-format nil ;; org-html-footnote-format
-             ;; :html-footnote-separator	org-html-footnote-separator
-             ;; :html-footnotes-section	org-html-footnotes-section
-             ;; :html-format-drawer-function	org-html-format-drawer-function
-             ;; :html-format-headline-function	org-html-format-headline-function
-             ;; :html-format-inlinetask-function	org-html-format-inlinetask-function
-             ;; :html-head-extra	org-html-head-extra
-             ;; :html-head-include-default-style	org-html-head-include-default-style
-             ;; :html-head-include-scripts	org-html-head-include-scripts
-             ;; :html-head	org-html-head
-             :html-head	,(org-file-contents (concat org-blogs-site-path "/assets/header.html"))
-             ;; :html-home/up-format	org-html-home/up-format
-             ;; :html-html5-fancy	org-html-html5-fancy
-             ;; :html-indent	org-html-indent
-             ;; :html-infojs-options	org-html-infojs-options
-             ;; :html-infojs-template	org-html-infojs-template
-             ;; :html-inline-image-rules	org-html-inline-image-rules
-             ;; :html-inline-images	org-html-inline-images
-             ;; :html-link-home	org-html-link-home
-             ;; :html-link-org-files-as-html	org-html-link-org-files-as-html
-             ;; :html-link-up	org-html-link-up
-             ;; :html-link-use-abs-url	org-html-link-use-abs-url
-             ;; :html-mathjax-options	org-html-mathjax-options
-             ;; :html-mathjax-template	org-html-mathjax-template
-             ;; :html-metadata-timestamp-format	org-html-metadata-timestamp-format
-             ;; :html-postamble-format  org-html-postamble-format
-             :html-postamble org-blogs-postamble ;; org-html-postamble
-             ;; :html-preamble-format	org-html-preamble-format
-             :html-preamble org-blogs-preamble ;; org-html-preamble
-             ;; :html-self-link-headlines	org-html-self-link-headlines
-             ;; :html-table-align-individual-field	de{org-html-table-align-individual-fields
-             ;; :html-table-attributes	org-html-table-default-attributes
-             ;; :html-table-caption-above	org-html-table-caption-above
-             ;; :html-table-data-tags	org-html-table-data-tags
-             ;; :html-table-header-tags	org-html-table-header-tags
-             ;; :html-table-row-tags	org-html-table-row-tags
-             ;; :html-table-use-header-tags-for-first-column	org-html-table-use-header-tags-for-first-column
-             ;; :html-tag-class-prefix	org-html-tag-class-prefix
-             ;; :html-text-markup-alist	org-html-text-markup-alist
-             ;; :html-todo-kwd-class-prefix	org-html-todo-kwd-class-prefix
-             ;; :html-toplevel-hlevel	org-html-toplevel-hlevel
-             ;; :html-use-infojs	org-html-use-infojs
-             ;; :html-validation-link	org-html-validation-link
-             ;; :html-viewport	org-html-viewport
-             ;; :html-wrap-src-lines	org-html-wrap-src-lines
-             ;; :html-xml-declaration	org-html-xml-declaration
-
-             ;; ; Markdown specific properties
-             ;; :md-footnote-format	org-md-footnote-format
-             ;; :md-footnotes-section	org-md-footnotes-section
-             ;; :md-headline-style	org-md-headline-style
-
-             ;; ; Other options
-             :table-of-contents t
-             ;; :style "<link rel=\"stylesheet\" href=\"../other/mystyle.css\" type=\"text/css\" />"
-             )
-            ;; static assets
-            ("js"
-             :base-directory ,(concat org-blogs-site-path "/js/")
-             :base-extension "js"
-             :publishing-directory ,(concat org-blogs-output-path "/js/")
-             :recursive t
-             :publishing-function org-publish-attachment
-             )
-            ("conf"
-             :base-directory ,org-blogs-site-path
-             :base-extension "js"
-             :publishing-directory ,org-blogs-output-path
-             :recursive nil
-             :publishing-function org-publish-attachment
-             )
-            ("css"
-             :base-directory ,(concat org-blogs-site-path "/css/")
-             :base-extension "css"
-             :publishing-directory ,(concat org-blogs-output-path "/css/")
-             :recursive t
-             :publishing-function org-publish-attachment
-             )
-            ("images"
-             :base-directory ,(concat org-blogs-site-path "/images/")
-             :base-extension "jpg\\|gif\\|png\\|svg\\|gif"
-             :publishing-directory ,(concat org-blogs-output-path "/images/")
-             :recursive t
-             :publishing-function org-publish-attachment
-             )
-            ("assets"
-             :base-directory ,(concat org-blogs-site-path "/assets/")
-             :base-extension "mp3"
-             :publishing-directory ,(concat org-blogs-output-path "/assets/")
-             :recursive t
-             :publishing-function org-publish-attachment
-             )
-            ("webfonts"
-             :base-directory ,(concat org-blogs-site-path "/webfonts/")
-             :base-extension "eot\\|svg\\|ttf\\|woff\\|woff2"
-             :publishing-directory ,(concat org-blogs-output-path "/webfonts/")
-             :recursive t
-             :publishing-function org-publish-attachment
-             )
-
-            ("website" :components ("conf" "orgfiles" "js" "css" "images" "assets" "webfonts"))
-            ("statics" :components ("conf" "js" "css" "images" "assets" "webfonts"))
-            ))))
+  '(update-site-publish-settings))
 
 (defun save-and-publish-website()
   "Save all buffers and publish."
