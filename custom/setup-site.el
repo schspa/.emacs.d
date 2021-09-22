@@ -171,20 +171,20 @@ regular expression will be included."
 
 (defun schspa/org-html-link (orig-fun &rest args)
   (if (string-equal "file" (org-element-property :type (car args)))
-	  (let* ((raw-path (org-element-property :path (car args)))
+      (let* ((raw-path (org-element-property :path (car args)))
              (is-org (string-suffix-p ".org" raw-path))
              (base-path)
              (output-path
               (if is-org (org-blog-get-out-path raw-path raw-path)
-                (setq base-path (org-blogs-generate-post-link-path buffer-file-name))
-                (concat "asserts/" (file-name-nondirectory raw-path)))
+                (setq base-path (org-blogs-generate-post-link-path
+                                 buffer-file-name))
+                (concat "assets/" (file-name-nondirectory raw-path)))
               ))
-        (org-element-put-property (car args) :path output-path)
         (if is-org
             (org-element-put-property (car args) :path output-path)
-          (message "copy from %s to %s" raw-path (concat org-blogs-output-path "/" base-path output-path))
-          (schspa/copy-file raw-path (concat org-blogs-output-path "/" base-path output-path))
-          (org-element-put-property (car args) :path output-path))
+          (schspa/copy-file raw-path (concat org-blogs-output-path
+                                             "/" base-path "/" output-path))
+          (org-element-put-property (car args) :path  output-path))
         )
     )
   (apply orig-fun args))
