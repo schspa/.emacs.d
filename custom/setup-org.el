@@ -27,7 +27,7 @@
 (require 'org)
 (defun schspa/org-confirm-babel-evaluate (lang body)
   ;; org babel evaluate whitelist
-  (let* ((whitelist-languages '("latex" "dot" "mermaid" "ditaa" "drawio" "plantuml")))
+  (let* ((whitelist-languages '("latex" "dot" "mermaid" "ditaa" "drawio" "plantuml" "bash")))
 	(not (member lang whitelist-languages))))
 
 (setq org-confirm-babel-evaluate 'schspa/org-confirm-babel-evaluate)

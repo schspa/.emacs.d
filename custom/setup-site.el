@@ -184,9 +184,7 @@ regular expression will be included."
             (org-element-put-property (car args) :path output-path)
           (schspa/copy-file raw-path (concat org-blogs-output-path
                                              "/" base-path "/" output-path))
-          (org-element-put-property (car args) :path  output-path))
-        )
-    )
+          (org-element-put-property (car args) :path  output-path))))
   (apply orig-fun args))
 
 (defun org-html-publish-to-blogs (plist filename pub-dir)
