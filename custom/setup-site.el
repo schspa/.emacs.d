@@ -237,8 +237,10 @@ representation for the files to include, as returned by
   (concat "#+TITLE: " title "\n\n"
 	      (org-list-to-org (remove (list nil) list))))
 
-(defun update-site-publish-settings ()
-  "Update site publish settings"
+(defun org-publish-refresh-settings ()
+  "Update site publish settings, This function will walk through
+`schspa/blog-source-dir' and search all org files with filetags \"blogs\""
+  (interactive)
   (setq org-publish-project-alist
         `(("orgfiles"
            ;; ; Sources and destinations for files.
@@ -408,14 +410,13 @@ representation for the files to include, as returned by
            )
 
           ("website" :components ("conf" "orgfiles" "js" "css" "images" "assets" "webfonts"))
-          ("statics" :components ("conf" "js" "css" "images" "assets" "webfonts"))
-          )))
+          ("statics" :components ("conf" "js" "css" "images" "assets" "webfonts")))))
 
 (eval-after-load 'ox-publish
   ;; org-publish-project-alist
   ;; ("project-name" :property value :property value ...)
   ;; ("project-name" :components ("project-name" "project-name" ...))
-  '(update-site-publish-settings))
+  '(call-interactively #'org-publish-refresh-settings))
 
 (defun save-and-publish-website()
   "Save all buffers and publish."
