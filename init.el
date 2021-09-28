@@ -105,6 +105,7 @@
 (require 'setup-editing)
 (require 'setup-lsp)
 (require 'setup-c)
+(require 'setup-ctags)
 (require 'setup-python)
 (require 'setup-bugreport)
 (require 'setup-elisp)
