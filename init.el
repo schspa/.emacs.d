@@ -117,4 +117,13 @@
 (require 'setup-mail)
 (require 'setup-pdms)
 (require 'setup-vterm)
+(require 'org-srclink)
+(org-srclink-set-parameters
+ "atf"
+ :localpath (expand-file-name "~/work/src/arm-trusted-firmware"))
+(org-srclink-set-parameters
+ "kernel"
+ :localpath (expand-file-name "~/work/src/linux"))
+
+
 (put 'magit-clean 'disabled nil)
