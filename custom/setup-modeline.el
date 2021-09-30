@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(use-package find-file-in-project
+  :ensure t)
+
 (use-package doom-modeline
   :ensure t
   :config

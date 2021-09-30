@@ -25,7 +25,6 @@
         ;; --- Themes ---
         ;; solarized-theme
         ;; smart-mode-line
-        validate
         dracula-theme
         android-mode
         anaconda-mode
