@@ -170,6 +170,12 @@ regular expression will be included."
   (copy-file from to t t))
 
 (defun schspa/org-html-link (orig-fun &rest args)
+  "Copy an image file to website directory.
+
+orig-func is the origin `org-html-link' function to export org links. args is
+the arguments passed to `org-html-link'
+
+Return output file name."
   (if (string-equal "file" (org-element-property :type (car args)))
       (let* ((raw-path (org-element-property :path (car args)))
              (is-org (string-suffix-p ".org" raw-path))
@@ -185,7 +191,17 @@ regular expression will be included."
           (schspa/copy-file raw-path (concat org-blogs-output-path
                                              "/" base-path "/" output-path))
           (org-element-put-property (car args) :path  output-path))))
-  (apply orig-fun args))
+  (let ((exported (apply orig-fun args)))
+    ;; Copy drawio file path to
+    (if (string-equal "drawio" (org-element-property :type (car args)))
+        (let* ((raw-path (org-element-property :path (car args)))
+               (path-args (org-drawio-get-output-file-name-base raw-path))
+               (png-path (cadr path-args))
+               (site-path (concat "/assets/" (file-name-nondirectory png-path))))
+          (message "linktype: %s site-path: %s" (org-element-property :type (car args)) site-path)
+          (schspa/copy-file png-path (concat org-blogs-output-path site-path))
+          (format "<img src=\"%s\">" site-path))
+      exported)))
 
 (defun org-html-publish-to-blogs (plist filename pub-dir)
   "Publish an org file to HTML.
