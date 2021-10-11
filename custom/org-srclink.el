@@ -90,14 +90,17 @@ Return nil if non match"
  :export #'org-srclink-export
  :store #'org-srclink-store-link)
 
-(defun org-srclink-export (link description format)
+(defun org-srclink-export (link description linkformat)
   "Export a srclink link from Org files."
   (let* ((link-params (split-string-and-unquote link "#"))
-         (path (nth 0 link-params))
-         (revision (nth 1 link-params))
+         (repo (nth 0 link-params))
+         (repo-info (org-srclink-get-repo-by-name repo))
+         (path (nth 1 link-params))
+         (line (nth 2 link-params))
+         (revision (nth 3 link-params))
          (desc (or description link)))
-    (pcase format
-      (`html (format "<a target=\"_blank\" href=\"%s@%s\">%s</a>" path revision desc))
+    (pcase linkformat
+      (`html (format (plist-get (org-srclink-get-repo-by-name repo) :html-link-fmt) revision path line repo))
       (`latex (format "\\href{%s}{%s}" path desc))
       (`texinfo (format "@uref{%s,%s}" path desc))
       (`ascii (format "%s (%s)" desc path))

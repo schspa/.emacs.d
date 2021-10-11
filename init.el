@@ -117,13 +117,23 @@
 (require 'setup-mail)
 (require 'setup-pdms)
 (require 'setup-vterm)
+(require 'org-drawio)
 (require 'org-srclink)
+
 (org-srclink-set-parameters
  "atf"
- :localpath (expand-file-name "~/work/src/arm-trusted-firmware"))
+ :localpath (expand-file-name "~/work/src/optee/trusted-firmware-a")
+ :html-link-fmt "<a target=\"_blank\" href=\"https://github.com/ARM-software/arm-trusted-firmware/blob/%s/%s#L%s\">%s</a>")
+
 (org-srclink-set-parameters
  "kernel"
- :localpath (expand-file-name "~/work/src/linux"))
+ :localpath (expand-file-name "~/work/src/linux")
+ :html-link-fmt "<a target=\"_blank\" href=\"https://github.com/torvalds/linux/blob/%s/%s#L%s\">%s</a>")
+
+(org-srclink-set-parameters
+ "optee-os"
+ :localpath (expand-file-name "~/work/src/optee/optee_os")
+ :html-link-fmt "<a target=\"_blank\" href=\"https://github.com/OP-TEE/optee_os//blob/%s/%s#L%s\">%s</a>")
 
 
 (put 'magit-clean 'disabled nil)

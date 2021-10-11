@@ -252,17 +252,19 @@ Get the drawio note file link path by file-name."
 
 (defun org-drawio-edit (path)
   "Edit given PATH in drawio."
-  (let ((drawio-path (expand-file-name path)))
+  (let* ((path-args (org-drawio-get-output-file-name-base path))
+         (drawio-path (expand-file-name (car path-args))))
     (when (f-exists-p drawio-path)
       (cond
        ((eq system-type 'darwin)
         (call-process-shell-command (format "open -a %s %s" org-drawio-bin drawio-path))
         )
        (t  ;; TODO need feedback from other os
-        (call-process-shell-command (format "%s %s" org-drawio-bin drawio-path))
-        ))
-      (org-drawio-add-watcher drawio-path)
-      )))
+        (start-process-shell-command
+         (format "drawio-edit:%s" drawio-path) (format "drawio-edit:%s" drawio-path)
+         (format "%s %s" org-drawio-bin drawio-path))))
+      (org-drawio-add-watcher drawio-path))))
+
 
 (defun org-drawio-export (_path _desc _backend)
   "Export drawio canvas _PATH from Org files.
