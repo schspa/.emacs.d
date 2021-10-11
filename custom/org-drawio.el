@@ -30,7 +30,6 @@
 ;;;; Requirements
 
 (require 'org)
-(require 'org-link-edit)
 (require 'cl-lib)
 (require 'filenotify)
 (require 'f)
@@ -60,7 +59,7 @@
   :type 'string
   :package-version '(org-drawio . "0.1.0"))
 
-(defcustom org-drawio-bin "/usr/local/Caskroom/drawio/13.3.1/draw.io.app/Contents/MacOS/draw.io"
+(defcustom org-drawio-bin "drawio"
   "Location of drawiopp executable."
   :group 'org-drawio
   :type 'string
@@ -170,18 +169,19 @@ Get the drawio note file link path by file-name."
          (base-path (file-name-base (nth 0 path-args))))
     (cons (nth 0 path-args)
           (if (<= (length path-args) 1)
-              (cons (format "%s.png" base-path) nil)
-            (cons (format "%s-%s.png" base-path (nth 1 path-args))
+              (cons (format "%s.%s.png" (or (file-name-directory drawio-path) "") base-path) nil)
+            (cons (format "%s.%s-%s.png" (or (file-name-directory drawio-path) "") base-path (nth 1 path-args))
                   (string-to-number (nth 1 path-args)))))))
-
-(cddr (org-drawio-get-output-file-name-base "sss.drawio"))
 
 (defun org-drawio-save-image (drawio-path png-path &optional page-index)
   "Convert DRAWIO-PATH to PNG and write it to PNG-PATH."
   (let* ((page-args (if page-index (format "--page-index %d" page-index) ""))
-         (process_cmd (format "%s -x %s -f png -o %s %s" org-drawio-bin page-args png-path drawio-path)))
-    (message "process cmd: %s" process_cmd)
-    (call-process-shell-command process_cmd)))
+         (process_cmd (format "%s -x %s -f png -o %s %s" org-drawio-bin page-args png-path drawio-path))
+         (need_process (not (file-newer-than-file-p png-path drawio-path))))
+    (if need_process
+        (progn
+          (message "process cmd: %s" process_cmd)
+          (call-process-shell-command process_cmd)))))
 
 (defun org-drawio-get-png (drawio-link-path)
   "Get png image data from given DRAWIO-PATH."
@@ -198,17 +198,6 @@ Get the drawio note file link path by file-name."
     )
   )
 
-(defun org-drawio-make-new-image (output-drawio-path &optional default)
-  "Create a new Drawio file based on a template at OUTPUT-DRAWIO-PATH."
-  (let ((template
-         (if org-drawio-always-use-default-template
-             (expand-file-name org-drawio-default-template-name org-drawio-template-dir)
-           (read-file-name "Chose Template:"  org-drawio-template-dir org-drawio-default-template-name t)
-           )
-         ))
-    (f-copy template output-drawio-path)))
-
-
 (defun org-drawio-show-link (link)
   (org-drawio-hide-link link)
   (let* ((start (org-element-property :begin link))
@@ -217,19 +206,6 @@ Get the drawio note file link path by file-name."
          (drawio-path (org-element-property :path link)))
     (overlay-put overlay 'display (create-image (org-drawio-get-png drawio-path) 'png t :scale 0.4))
     (push (cons drawio-path overlay) org-drawio-overlays)))
-
-
-(defun org-drawio-show-current-link (&optional complete-file link-location description)
-  (cl-multiple-value-bind (start end link desc) (org-link-edit--link-data)
-    (let* (
-           (overlay (make-overlay start end))
-           (drawio-path (nth 1 (split-string link ":")))
-           )
-      (overlay-put overlay 'display (create-image (org-drawio-get-png drawiio-path) 'png t :scale 0.4))
-      (push (cons drawio-path overlay) org-drawio-overlays)
-      )
-    )
-  )
 
 (defun org-drawio-hide-link (link)
   (let ((overlay (alist-get (org-element-property :path link) org-drawio-overlays nil nil #'string-equal)))
@@ -293,7 +269,7 @@ Get the drawio note file link path by file-name."
 Argument _DESC refers to link description.
 Argument _BACKEND refers to export backend."
   (let* ((path-args (org-drawio-get-output-file-name-base _path))
-         (png-path (expand-file-name (cadr path-args) (file-name-directory _path))))
+         (png-path (cadr path-args)))
     (cl-case _backend
       (html (format "<img src=\"%s\">"
                     (prog1 png-path
@@ -307,35 +283,13 @@ Argument _BACKEND refers to export backend."
                        (org-drawio-save-image (car path-args) png-path (cddr path-args)))))
       )))
 
-
 ;;;; Functions
 
-(org-link-set-parameters org-drawio-link-prefix
-                         :follow #'org-drawio-edit
-                         :export #'org-drawio-export
-                         )
-
-;;;###autoload
-(defun org-drawio-insert-new-image (output-drawio-path desc)
-  "Insert new image in current buffer."
-  (interactive
-   (let ((output-drawio-path (funcall org-drawio-get-new-filepath))
-         (desc (funcall org-drawio-get-new-desc)))
-     (list output-drawio-path desc)))
-  (org-drawio-make-new-image output-drawio-path)
-  (org-insert-link nil (format "%s:%s" org-drawio-link-prefix output-drawio-path) desc)
-  (org-drawio-show-current-link)
-  )
-
-;;;###autoload
-(defun org-drawio-insert-new-image-with-default-template ()
-  "Insert new image in current buffer."
-  (interactive)
-  (let ((org-drawio-always-use-default-template t))
-    (org-drawio-insert-new-image (funcall org-drawio-get-new-filepath) (funcall org-drawio-get-new-desc))
-    )
-  )
-
+(org-link-set-parameters
+ org-drawio-link-prefix
+ :follow #'org-drawio-edit
+ :export #'org-drawio-export
+ )
 
 ;;;###autoload
 (define-minor-mode org-drawio-mode
