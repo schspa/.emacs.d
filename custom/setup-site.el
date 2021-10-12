@@ -164,10 +164,11 @@ regular expression will be included."
 			(file-name-directory (directory-file-name dir)))
 	"."))
 
-(defun schspa/copy-file (from to)
+(defun schspa/copy-file (from to &optional is-image)
   "copy file and make directory automaticly"
   (make-directory (schspa/parent-directory to) t)
-  (copy-file from to t t))
+  (if is-image (call-process-shell-command (format "convert %s -gravity east label:'schspa.github.io' -append  %s" from to))
+    (copy-file from to t t)))
 
 (defun schspa/org-html-link (orig-fun &rest args)
   "Copy an image file to website directory.
@@ -188,8 +189,10 @@ Return output file name."
               ))
         (if is-org
             (org-element-put-property (car args) :path output-path)
-          (schspa/copy-file raw-path (concat org-blogs-output-path
-                                             "/" base-path "/" output-path))
+          (schspa/copy-file raw-path
+                            (concat org-blogs-output-path
+                                    "/" base-path "/" output-path)
+                            (org-export-inline-image-p (car args)))
           (org-element-put-property (car args) :path  output-path))))
   (let ((exported (apply orig-fun args)))
     ;; Copy drawio file path to
@@ -199,7 +202,7 @@ Return output file name."
                (png-path (cadr path-args))
                (site-path (concat "/assets/" (file-name-nondirectory png-path))))
           (message "linktype: %s site-path: %s" (org-element-property :type (car args)) site-path)
-          (schspa/copy-file png-path (concat org-blogs-output-path site-path))
+          (schspa/copy-file png-path (concat org-blogs-output-path site-path) t)
           (format "<img src=\"%s\">" site-path))
       exported)))
 
