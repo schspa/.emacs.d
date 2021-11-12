@@ -127,7 +127,8 @@ regular expression will be included."
 
 (defun schspa/getposts-info (filePath)
   "Return posts file information"
-  (let ((my-posts ()))
+  (let ((my-posts ())
+        (json-encoding-pretty-print t))
     (seq-filter
      (lambda (elt)
        (let* ((fileprops (schspa/get-org-filetags elt))
@@ -167,7 +168,11 @@ regular expression will be included."
 (defun schspa/copy-file (from to &optional is-image)
   "copy file and make directory automaticly"
   (make-directory (schspa/parent-directory to) t)
-  (if is-image (call-process-shell-command (format "convert %s -gravity east label:'schspa.github.io' -append  %s" from to))
+  (message "copy %s to %s is-image: %S" from to is-image)
+  (if is-image (progn
+                 (message "Copy image and add watermark")
+                 (call-process-shell-command (format "convert -size 280x160 xc:none -fill grey -gravity NorthWest -draw \"text 10,10 'schspa.github.io'\" -gravity SouthEast -draw \"text 5,15 'schspa.github.io'\" miff:- | composite -tile - %s  %s" from to)))
+
     (copy-file from to t t)))
 
 (defun schspa/org-html-link (orig-fun &rest args)
