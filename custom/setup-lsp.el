@@ -45,14 +45,6 @@
 (use-package lsp-java
   :ensure t)
 
-(use-package lsp-python-ms
-  :ensure t
-  :init
-  (when (executable-find "python3")
-    (setq lsp-python-ms-python-executable-cmd "python3"))
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-python-ms)
-                         (lsp))))  ; or lsp-deferred
 (use-package lsp-mode
   :commands lsp
   :init
@@ -65,10 +57,6 @@
 							(cond ((derived-mode-p 'c-mode 'c++-mode 'objc-mode)
 								   (progn
 									 (require 'ccls)
-									 (lsp)))
-								  ((derived-mode-p 'python-mode)
-								   (progn
-									 (require 'lsp-python-ms)
 									 (lsp)))
 								  ((derived-mode-p 'java-mode)
 								   (progn
