@@ -100,7 +100,7 @@ Return nil if non match"
          (revision (nth 3 link-params))
          (desc (or description link)))
     (pcase linkformat
-      (`html (format (plist-get (org-srclink-get-repo-by-name repo) :html-link-fmt) revision path line repo))
+      (`html (format (plist-get (org-srclink-get-repo-by-name repo) :html-link-fmt) revision path line desc))
       (`latex (format "\\href{%s}{%s}" path desc))
       (`texinfo (format "@uref{%s,%s}" path desc))
       (`ascii (format "%s (%s)" desc path))

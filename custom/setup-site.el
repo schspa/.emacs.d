@@ -39,12 +39,13 @@
 
 (progn
   "Settings of `org-export'."
-  (setq org-export-in-background t
-        ;; Hide html built-in style and script.
-        org-html-htmlize-output-type 'inline-css
-        org-html-head-include-default-style nil
-        org-html-head-include-scripts nil
-        ))
+  (custom-set-variables
+   '(org-export-in-background t)
+   '(org-html-htmlize-output-type 'inline-css)
+   '(org-html-head-include-default-style nil)
+   '(org-html-head-include-scripts nil)
+   '(org-html-wrap-src-lines t)
+   ))
 
 (defun org-blogs-get-date (filename)
   "Extract the `#+date:` from file-name as date-time."
