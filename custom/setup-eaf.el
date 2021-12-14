@@ -1,4 +1,4 @@
-;;; setup-eaf.el --- Description
+;;; setup-eaf.el --- Description -*- lexical-binding: t; -*-
 
 ;; Author: SH147NDT2F  schspa@SH147NDT2F
 ;; Keywords: elisp
@@ -27,17 +27,33 @@
   :if sys/linuxp
   :quelpa
   (eaf :fetcher github
-       :repo "schspa/emacs-application-framework"
-       :files ("*"))
-  :defer t
+       :repo "emacs-eaf/emacs-application-framework"
+       :files ("core" "app" "*.el" "*.py"))
   :init
   :custom
   (eaf-find-alternate-file-in-dired t)
   :config
-  (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
-  (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
-  (eaf-bind-key take_photo "p" eaf-camera-keybinding))
+  (global-set-key (kbd "<f12>") #'eaf-toggle)
+  (require 'eaf)
+  (defun eaf-toggle ()
+    (interactive)
+    (if (advice-member-p 'eaf--find-file-advisor 'find-file)
+        (advice-remove 'find-file 'eaf--find-file-advisor)
+      (advice-add #'find-file :around #'eaf--find-file-advisor))))
 
+(use-package eaf-pdf-viewer
+  :if sys/linuxp
+  :quelpa
+  (eaf-pdf-viewer :fetcher github
+                  :repo "emacs-eaf/eaf-pdf-viewer"
+                  :files ("*"))
+  :init
+  :custom
+  (eaf-find-alternate-file-in-dired t)
+  :config
+  (require 'eaf-pdf-viewer)
+  (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding))
 
 (provide 'setup-eaf)
 
