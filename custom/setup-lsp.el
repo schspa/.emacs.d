@@ -24,24 +24,6 @@
 
 ;;; Code:
 
-(use-package ccls
-  :ensure t
-  :config
-  ;; https://github.com/maskray/ccls/blob/master/src/config.h
-  (setq
-   ccls-initialization-options
-   `(:clang
-     (:excludeArgs
-      ;; Linux's gcc options. See ccls/wiki
-      ["--param=allow-store-data-races=0" "-W*" "-f*" "-m*"]
-      :extraArgs ["--gcc-toolchain=/usr"])
-     :completion
-     (:include
-      (:blacklist
-       ["^/usr/(local/)?include/c\\+\\+/[0-9\\.]+/(bits|tr1|tr2|profile|ext|debug)/"
-        "^/usr/(local/)?include/c\\+\\+/v1/"]))
-     :cache (:directory "/tmp/ccls-cache"))))
-
 (use-package lsp-java
   :ensure t)
 
@@ -53,16 +35,16 @@
   (setq lsp-enable-file-watchers nil)
   ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
   :hook
-  (hack-local-variables . (lambda ()
-							(cond ((derived-mode-p 'c-mode 'c++-mode 'objc-mode)
-								   (progn
-									 (require 'ccls)
-									 (lsp)))
-								  ((derived-mode-p 'java-mode)
-								   (progn
-									 (require 'lsp-java)
-									 (lsp)))
-								  ))))
+  (hack-local-variables
+   . (lambda ()
+	   (cond ((derived-mode-p 'c-mode 'c++-mode 'objc-mode)
+			  (progn
+			    (lsp)))
+		     ((derived-mode-p 'java-mode)
+			  (progn
+			    (require 'lsp-java)
+			    (lsp)))
+		     ))))
 (use-package lsp-ui
   :commands lsp-ui-mode
   :ensure t
