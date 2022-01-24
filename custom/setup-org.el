@@ -269,11 +269,11 @@ org-protocol://gdt?id=CBEC8DD1-7814-44A7-AA3D-97AEC35B6DB7"
     '(require 'ox-json nil t)))
 
 ;; Presentations
-(use-package org-re-reveal
+(use-package ox-reveal
   :ensure t
   :custom
-  (org-re-reveal-revealjs-version "4.1.0")
-  (org-re-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.1.0"))
+  (org-reveal-revealjs-version "4.1.0")
+  (org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.1.0"))
 ;;set agenda files
 (provide 'setup-org)
 
