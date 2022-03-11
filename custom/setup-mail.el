@@ -24,6 +24,9 @@
 ;;; Code:
 (require 'json)
 
+;; https://www.sastibe.de/2021/01/setting-up-emacs-as-mail-client/
+;; https://gist.github.com/letoh/5497116
+;; https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-Mail-03.org
 ;; Set work email with fellowing elisp code.
 ;; (secrets-create-item
 ;;  (secrets-get-alias "default")
@@ -38,13 +41,68 @@
 ;;  :service "email-conf"
 ;;  :username "work")
 
+(defun chomp (str)
+  "Chomp leading and tailing whitespace from STR."
+  (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'" str)
+    (setq str (replace-match "" t t str))) str)
+
+
+(defun get-keychain-password (service account-name)
+  "Gets `account` keychain password from OS X Keychain"
+  (if (eq system-type 'darwin)
+      (chomp
+       (shell-command-to-string
+        (concatenate
+         'string
+         "security find-generic-password -s " service " -wga "
+         account-name)))
+    (let ((collect (secrets-get-alias "default")))
+      (secrets-get-secret
+       collect
+       (car (secrets-search-items
+             collect :service service :username account-name))))))
+
 (defun get-mail-conf (user attribute)
   "Get email configuration for system keyring"
-  (let* ((collect (secrets-get-alias "default"))
-         (item (car (secrets-search-items collect :service "email-conf" :username user)))
-         (json-string (secrets-get-secret collect item))
+  (let* ((json-string (get-keychain-password "email-conf" "gmail"))
          (mail-conf (json-parse-string json-string :object-type 'alist)))
     (cdr (assoc attribute mail-conf))))
+
+(setq auth-sources '("~/.authinfo.gpg"))
+
+(defgroup mail-work nil
+  "Facilities for work environment mail to work."
+  :group 'development)
+
+(defcustom work-mail-dir nil
+  "mail address for mail"
+  :group 'mail-work
+  :type 'string)
+
+(defcustom work-mail-username ""
+  "mail address for mail"
+  :group 'mail-work
+  :type 'string)
+
+(defcustom work-mail-address ""
+  "mail address for work"
+  :group 'mail-work
+  :type 'string)
+
+(defcustom work-mail-user-full-name ""
+  "mail address for mail"
+  :group 'mail-work
+  :type 'string)
+
+(defcustom work-mail-getmail-command ""
+  "mail address for mail"
+  :group 'mail-work
+  :type 'string)
+
+(defcustom work-mail-smtp-server ""
+  "mail address for mail"
+  :group 'mail-work
+  :type 'string)
 
 (use-package mu4e
   :load-path "/usr/share/emacs/site-lisp/mu4e"
@@ -56,35 +114,64 @@
 	         :enter-func (lambda () (mu4e-message "Entering Private context"))
              :leave-func (lambda () (mu4e-message "Leaving Private context"))
 	         ;; we match based on the maildir of the message
-             :match-func (lambda (msg)
-                           (when msg
-                             (mu4e-message-contact-field-matches msg
-                                                                 :maildir "^/gmail")))
-	         :vars '(( user-mail-address     . "schspa@gmail.com"  )
+             :match-func (lambda (msg) (when msg
+                                         (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+	         :vars '((mu4e-sent-folder   . "/gmail/sent")
+	                 (mu4e-trash-folder  . "/gmail/trash")
+	                 (mu4e-refile-folder . "/gmail/archive")
+	                 (mu4e-drafts-folder . "/gmail/drafts")
+                     ( user-mail-address     . "schspa@gmail.com"  )
 		             ( user-full-name	     . "Schspa Shi" )
-                     ( mu4e-get-mail-command . "proxychains offlineimap -a gmail")))
+                     ( mu4e-get-mail-command . "offlineimap -a gmail")))
            ))
-  (when (get-mail-conf "work" :maildir)
+  (setq mu4e-compose-format-flowed t)
+  (when work-mail-dir
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
                   :name "work"
                   :enter-func (lambda () (mu4e-message "Switch to the Work context"))
                   ;; no leave-func
                   ;; we match based on the maildir of the message
-                  :match-func (lambda (msg)
-                                (when msg
-                                  (mu4e-message-contact-field-matches
-                                   msg
-                                   :maildir (get-mail-conf "work" :maildir))))
+                  :match-func (lambda (msg) (when msg
+                                              (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
                   :vars
-                  `(( user-mail-address       . ,(get-mail-conf "work" :user-mail-address))
-                    ( user-full-name          . ,(get-mail-conf "work" :user-full-name))
+                  `((mu4e-sent-folder   . "/work/发件箱")
+	                (mu4e-trash-folder  . "/work/已删除邮件")
+	                (mu4e-refile-folder . "/work/垃圾邮件")
+	                (mu4e-drafts-folder . "/work/草稿")
+                    ( user-mail-address       . ,(symbol-value 'work-mail-address))
+                    ( user-full-name          . ,(symbol-value 'work-mail-user-full-name))
                     ( mu4e-compose-signature  . ,(concat
-                                                  (get-mail-conf "work" :user-full-name)
+                                                  work-mail-user-full-name
                                                   "\n"
                                                   "BRs\n"))
-                    ( mu4e-get-mail-command   . ,(get-mail-conf "work" :get-mail-command))))))
+                    ( mu4e-get-mail-command   . ,(symbol-value 'work-mail-getmail-command))
+                    (smtpmail-default-smtp-server . ,(symbol-value 'work-mail-smtp-server))
+	                (smtpmail-smtp-server . ,(symbol-value 'work-mail-smtp-server))
+	                (smtpmail-smtp-user . ,(symbol-value 'work-mail-username))
+                    ;; (smtpmail-debug-info . t)
+                    ;; (smtpmail-debug-verb . t)
+	                (smtpmail-stream-type . starttls)
+                    (starttls-use-gnutls . t)
+	                (smtpmail-smtp-service . 587)
+                    ))))
   )
+
+(setq send-mail-function 'smtpmail-send-it) ; if you use `mail'
+;; (setq message-send-mail-function 'smtpmail-send-it) ; if you use message/Gnus
+
+(use-package org-mime
+  :ensure t
+  :config
+  (setq org-mime-export-options '(:section-numbers nil
+                                                   :with-author nil
+                                                   :with-toc nil))
+  (add-hook 'org-mime-html-hook
+            (lambda ()
+              (org-mime-change-element-style
+               "pre" (format "color: %s; background-color: %s; padding: 0.5em;"
+                             "#E6E1DC" "#232323"))))
+  (add-hook 'message-send-hook 'org-mime-confirm-when-no-multipart))
 
 (provide 'setup-mail)
 
