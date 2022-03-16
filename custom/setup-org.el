@@ -175,11 +175,11 @@
   ;; otherwise add to existing setup
   ;; you can of course change the letters, too
   (setq org-capture-templates `(("i" "Inbox"
-                                 entry (file ,(org-gtd--path org-gtd-inbox-file-basename))
+                                 entry (file ,(org-gtd--path "inbox"))
                                  "* %?\n%U\n\n  %i"
                                  :kill-buffer t)
                                 ("l" "Todo with link"
-                                 entry (file ,(org-gtd--path org-gtd-inbox-file-basename))
+                                 entry (file ,(org-gtd--path "inbox"))
                                  "* %?\n%U\n\n  %i\n  %a"
                                  :kill-buffer t))))
 

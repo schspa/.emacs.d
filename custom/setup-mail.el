@@ -135,10 +135,10 @@
                   :match-func (lambda (msg) (when msg
                                               (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
                   :vars
-                  `((mu4e-sent-folder   . "/work/发件箱")
-	                (mu4e-trash-folder  . "/work/已删除邮件")
-	                (mu4e-refile-folder . "/work/垃圾邮件")
-	                (mu4e-drafts-folder . "/work/草稿")
+                  `((mu4e-sent-folder   . "/work/sent")
+	                (mu4e-trash-folder  . "/work/trash")
+	                (mu4e-refile-folder . "/work/archive")
+	                (mu4e-drafts-folder . "/work/drafts")
                     ( user-mail-address       . ,(symbol-value 'work-mail-address))
                     ( user-full-name          . ,(symbol-value 'work-mail-user-full-name))
                     ( mu4e-compose-signature  . ,(concat
