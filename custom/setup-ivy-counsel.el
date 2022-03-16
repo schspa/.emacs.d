@@ -144,9 +144,7 @@
 
   (ivy-rich-mode 1))
 
-(el-get-bundle counsel-woman
-  :url "https://raw.githubusercontent.com/yangyingchao/tubo-env/master/.emacs.d/site-lisp/counsel%2B/counsel-woman.el"
-  (require 'counsel-woman)
-  (define-key global-map (kbd "C-c h m") 'counsel-woman))
+(require 'counsel-woman)
+(define-key global-map (kbd "C-c h m") 'counsel-woman)
 
 (provide 'setup-ivy-counsel)
