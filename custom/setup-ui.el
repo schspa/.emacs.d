@@ -23,12 +23,6 @@
 ;;
 
 ;;; Code:
-(unless sys/mac-x-p
-  (menu-bar-mode 0))
-(tool-bar-mode 0)
-(column-number-mode)
-
-(if window-system (scroll-bar-mode 0))
 (global-visual-line-mode t)
 (global-hl-line-mode t)
 
