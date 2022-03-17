@@ -24,6 +24,33 @@
    ("C-c y S" . youdao-dictionary-search-at-point)
    ("C-c y p" . youdao-dictionary-play-voice-at-point)))
 
+(use-package languagetool
+  :ensure t
+  :defer t
+  :commands (languagetool-check
+             languagetool-clear-suggestions
+             languagetool-correct-at-point
+             languagetool-correct-buffer
+             languagetool-set-language
+             languagetool-server-mode
+             languagetool-server-start
+             languagetool-server-stop)
+  :config
+  (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8")
+        languagetool-console-command (expand-file-name "bin/LanguageTool-5.6/languagetool-commandline.jar" user-emacs-directory)
+        languagetool-server-command (expand-file-name "bin/LanguageTool-5.6/languagetool-server.jar"
+                                                      user-emacs-directory)))
+(use-package flycheck-languagetool
+  :ensure t
+  :hook ((text-mode . flycheck-languagetool-setup)
+         (latex-mode . flycheck-languagetool-setup)
+         (org-mode . flycheck-languagetool-setup)
+         (markdown-mode . flycheck-languagetool-setup))
+  :init
+  (setq flycheck-languagetool-server-jar
+        (expand-file-name "bin/LanguageTool-5.6/languagetool-server.jar"
+                          user-emacs-directory)))
+
 (use-package rime
   :quelpa (rime :fetcher github
                 :repo "DogLooksGood/emacs-rime"
