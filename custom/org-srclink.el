@@ -57,8 +57,8 @@ Return nil if non match"
   (seq-some
    (lambda (item)
      (let* ((param (cdr item))
-            (localpath (plist-get param :localpath)))
-       (when (string-prefix-p localpath (expand-file-name path))
+            (localpath (file-truename (plist-get param :localpath))))
+       (when (string-prefix-p localpath (file-truename path))
          item))
      ) org-srclink-repos))
 
