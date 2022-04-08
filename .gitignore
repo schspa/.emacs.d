@@ -8,3 +8,4 @@ semanticdb/
 tramp
 session.*
 .*
+transient/

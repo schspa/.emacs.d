@@ -28,8 +28,12 @@
   :init
   :config
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-  (projectile-mode t)
-  (setq projectile-enable-caching t))
+  :custom
+  (projectile-cache-file (expand-file-name "projectile.cache" my-cache-dir))
+  (projectile-known-projects-file (expand-file-name "projectile-bookmarks.eld" my-cache-dir))
+  (projectile-enable-caching t)
+  :hook
+  (after-init . (lambda () (projectile-mode t))))
 
 (provide 'setup-projectile)
 
