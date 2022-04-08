@@ -59,7 +59,9 @@
   :type 'string
   :package-version '(org-drawio . "0.1.0"))
 
-(defcustom org-drawio-bin "drawio"
+(defcustom org-drawio-bin (if (eq system-type 'darwin)
+                              "/Applications/draw.io.app/Contents/MacOS/draw.io"
+                            "drawio")
   "Location of drawiopp executable."
   :group 'org-drawio
   :type 'string
