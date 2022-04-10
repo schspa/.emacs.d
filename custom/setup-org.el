@@ -25,6 +25,9 @@
 ;;; Code:
 
 (require 'org)
+
+(require 'ob-ditaa)
+(setq org-ditaa-jar-path (expand-file-name "bin/ditaa-0.11.0-standalone.jar" user-emacs-directory))
 (defun schspa/org-confirm-babel-evaluate (lang body)
   ;; org babel evaluate whitelist
   (let* ((whitelist-languages '("latex" "dot" "mermaid" "ditaa" "drawio" "plantuml" "bash")))
