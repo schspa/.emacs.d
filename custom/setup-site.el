@@ -437,6 +437,11 @@ representation for the files to include, as returned by
           ("website" :components ("conf" "orgfiles" "js" "css" "images" "assets" "webfonts"))
           ("statics" :components ("conf" "js" "css" "images" "assets" "webfonts")))))
 
+(custom-set-variables
+ '(org-publish-timestamp-directory
+   (convert-standard-filename
+    (expand-file-name ".org-timestamps/" org-blogs-output-path))))
+
 (eval-after-load 'ox-publish
   ;; org-publish-project-alist
   ;; ("project-name" :property value :property value ...)
