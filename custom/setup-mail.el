@@ -122,8 +122,16 @@
 	                 (mu4e-drafts-folder . "/gmail/drafts")
                      ( user-mail-address     . "schspa@gmail.com"  )
 		             ( user-full-name	     . "Schspa Shi" )
-                     ( mu4e-get-mail-command . "offlineimap -a gmail")))
-           ))
+                     ( mu4e-get-mail-command . "offlineimap -a gmail")
+                     (smtpmail-default-smtp-server . "smtp.gmail.com")
+	                 (smtpmail-smtp-server . "smtp.gmail.com")
+	                 (smtpmail-smtp-user . "schspa@gmail.com")
+                     (smtpmail-debug-info . t)
+                     (smtpmail-debug-verb . t)
+	                 (smtpmail-stream-type . starttls)
+                     (starttls-use-gnutls . t)
+	                 (smtpmail-smtp-service . 587)
+                     ))))
   (setq mu4e-compose-format-flowed t)
   (when work-mail-dir
     (add-to-list 'mu4e-contexts

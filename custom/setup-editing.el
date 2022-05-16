@@ -45,7 +45,8 @@
   :hook ((text-mode . flycheck-languagetool-setup)
          (latex-mode . flycheck-languagetool-setup)
          (org-mode . flycheck-languagetool-setup)
-         (markdown-mode . flycheck-languagetool-setup))
+         (markdown-mode . flycheck-languagetool-setup)
+         (rst-mode . flycheck-languagetool-setup))
   :init
   (setq flycheck-languagetool-server-jar
         (expand-file-name "bin/LanguageTool-5.6/languagetool-server.jar"
