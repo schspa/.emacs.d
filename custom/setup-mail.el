@@ -104,6 +104,15 @@
   :group 'mail-work
   :type 'string)
 
+(use-package use-proxy
+  :ensure t)
+
+(defun smtpmail-send-email-with-proxy ()
+  (use-proxy-with-specified-proxies
+   '(("http" . "localhost:1087")
+     ("https" . "localhost:1087"))
+   (smtpmail-send-it)))
+
 (use-package mu4e
   :load-path "/usr/share/emacs/site-lisp/mu4e"
   :commands mu4e
@@ -122,8 +131,16 @@
 	                 (mu4e-drafts-folder . "/gmail/drafts")
                      ( user-mail-address     . "schspa@gmail.com"  )
 		             ( user-full-name	     . "Schspa Shi" )
-                     ( mu4e-get-mail-command . "offlineimap -a gmail")))
-           ))
+                     ( mu4e-get-mail-command . "offlineimap -a gmail")
+                     (smtpmail-default-smtp-server . "smtp.gmail.com")
+	                 (smtpmail-smtp-server . "smtp.gmail.com")
+	                 (smtpmail-smtp-user . "schspa@gmail.com")
+                     (smtpmail-debug-info . t)
+                     (smtpmail-debug-verb . t)
+	                 (smtpmail-stream-type . starttls)
+                     (starttls-use-gnutls . t)
+	                 (smtpmail-smtp-service . 587)
+                     ))))
   (setq mu4e-compose-format-flowed t)
   (when work-mail-dir
     (add-to-list 'mu4e-contexts
@@ -157,7 +174,7 @@
                     ))))
   )
 
-(setq send-mail-function 'smtpmail-send-it) ; if you use `mail'
+(setq send-mail-function 'smtpmail-send-email-with-proxy)
 ;; (setq message-send-mail-function 'smtpmail-send-it) ; if you use message/Gnus
 
 (use-package org-mime
