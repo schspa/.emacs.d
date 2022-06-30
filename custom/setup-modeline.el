@@ -27,10 +27,19 @@
 (use-package find-file-in-project
   :ensure t)
 
+(use-package mu4e-alert
+  :ensure t
+  :custom
+  (mu4e-alert-notify-repeated-mails t)
+  (mu4e-alert-enable-notifications t))
+
 (use-package doom-modeline
   :ensure t
+  :custom
+  (doom-modeline-project-detection 'ffip)
+  (doom-modeline-mu4e t)
   :config
-  (setq doom-modeline-project-detection 'ffip)
+  (mu4e-alert-enable-mode-line-display)
   :hook (after-init . doom-modeline-mode))
 
 (provide 'setup-modeline)
