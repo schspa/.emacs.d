@@ -117,6 +117,11 @@
   :load-path "/usr/share/emacs/site-lisp/mu4e"
   :commands mu4e
   :config
+  (setq
+   mu4e-get-mail-command "offlineimap"
+   mu4e-update-interval 300
+   mu4e-headers-auto-update t
+   mu4e-compose-format-flowed nil)
   (setq mu4e-contexts
         `( ,(make-mu4e-context
 	         :name "Private"
@@ -132,6 +137,9 @@
                      ( user-mail-address     . "schspa@gmail.com"  )
 		             ( user-full-name	     . "Schspa Shi" )
                      ( mu4e-get-mail-command . "offlineimap -a gmail")
+                     ( mu4e-compose-signature  .
+                       ;; https://en.wikipedia.org/wiki/Signature_block#Standard_delimiter
+                       "BRs\nSchspa Shi\n")
                      (smtpmail-default-smtp-server . "smtp.gmail.com")
 	                 (smtpmail-smtp-server . "smtp.gmail.com")
 	                 (smtpmail-smtp-user . "schspa@gmail.com")
@@ -141,7 +149,6 @@
                      (starttls-use-gnutls . t)
 	                 (smtpmail-smtp-service . 587)
                      ))))
-  (setq mu4e-compose-format-flowed t)
   (when work-mail-dir
     (add-to-list 'mu4e-contexts
                  (make-mu4e-context
@@ -158,10 +165,11 @@
 	                (mu4e-drafts-folder . "/work/drafts")
                     ( user-mail-address       . ,(symbol-value 'work-mail-address))
                     ( user-full-name          . ,(symbol-value 'work-mail-user-full-name))
-                    ( mu4e-compose-signature  . ,(concat
-                                                  work-mail-user-full-name
-                                                  "\n"
-                                                  "BRs\n"))
+                    ( mu4e-compose-signature  .
+                      ,(concat
+                        "BRs\n"
+                        work-mail-user-full-name
+                        "\n"))
                     ( mu4e-get-mail-command   . ,(symbol-value 'work-mail-getmail-command))
                     (smtpmail-default-smtp-server . ,(symbol-value 'work-mail-smtp-server))
 	                (smtpmail-smtp-server . ,(symbol-value 'work-mail-smtp-server))
@@ -175,7 +183,6 @@
   )
 
 (setq send-mail-function 'smtpmail-send-email-with-proxy)
-;; (setq message-send-mail-function 'smtpmail-send-it) ; if you use message/Gnus
 
 (use-package org-mime
   :ensure t
