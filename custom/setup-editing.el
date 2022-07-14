@@ -169,8 +169,16 @@
 ;; Package: undo-tree
 ;; GROUP: Editing -> Undo -> Undo Tree
 (use-package undo-tree
+  :defer t
+  :diminish undo-tree-mode
   :init
-  (global-undo-tree-mode 1))
+  (ignore-errors (make-directory "~/.emacs.d/.cache/undo"))
+  :custom
+  (undo-tree-visualizer-diff t)
+  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/.cache/undo")))
+  (undo-tree-visualizer-timestamps t)
+  :hook
+  (after-init . global-undo-tree-mode))
 
 
 ;; Package: yasnippet
