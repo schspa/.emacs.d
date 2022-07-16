@@ -116,6 +116,7 @@
 (require 'setup-mail)
 (require 'setup-pdms)
 (require 'setup-vterm)
+(require 'setup-net)
 (require 'org-drawio)
 (require 'org-srclink)
 

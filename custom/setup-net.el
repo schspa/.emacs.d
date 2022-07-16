@@ -43,9 +43,12 @@
        (add-to-list 'w3m-search-engine-alist '("w" "http://en.wikipedia.org/wiki/Special:Search?search=%s" utf-8))
        (add-to-list 'w3m-search-engine-alist '("d" "http://dictionary.reference.com/search?q=%s" utf-8))
        (add-to-list 'w3m-search-engine-alist '("j" "http://www.google.com.au/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=%s+site:developer.mozilla.org" utf-8))
-       )))
-
-(use-package 'helm-chrome)
+       ))
+  :hook
+  (w3m-mode . (lambda()
+                (when (>= emacs-major-version 26)
+                  (display-line-numbers-mode -1)
+                  (linum-mode)))))
 
 (use-package edit-server
   :ensure t
