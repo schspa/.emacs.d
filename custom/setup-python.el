@@ -22,10 +22,11 @@
   :ensure t)
 
 (use-package lsp-pyright
-  :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))  ; or lsp-deferred
+  :hook (python-mode . (lambda () (require 'lsp-pyright)))
+  :init (when (executable-find "python3")
+          (setq lsp-pyright-python-executable-cmd "python3")))
+
+;; or lsp-deferred
 ;; (add-hook 'python-mode-hook
 ;;           (lambda ()
 ;; 			(anaconda-mode t)
