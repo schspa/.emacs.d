@@ -282,7 +282,7 @@ Argument _BACKEND refers to export backend."
                   (or _desc _path)
                   (prog1 png-path (org-drawio-save-image (car path-args) png-path (cddr path-args)))))
       (ascii (format "%s (%s)" (or _desc _path) _path))
-      (latex (format "\\includegraphics[width=\\textheight,height=\\textwidth,keepaspectratio]{%s}"
+      (latex (format "\\includegraphics[width=0.98\\linewidth,keepaspectratio]{%s}"
                      (prog1 png-path
                        (org-drawio-save-image (car path-args) png-path (cddr path-args)))))
       )))
