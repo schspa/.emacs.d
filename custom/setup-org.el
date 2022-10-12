@@ -190,6 +190,62 @@
 (setq-default org-preview-latex-image-directory (concat my-cache-dir "/org-latex"))
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
+(setq org-latex-pdf-process
+      '("latexmk -pdflatex='xelatex -interaction nonstopmode' -pdf -bibtex -f %f"))
+
+
+
+(unless (boundp 'org-latex-classes)
+  (setq org-latex-classes nil)
+  (add-to-list 'org-latex-classes
+               '("article"
+                 "
+\\documentclass[12pt]{report}
+\\usepackage{fontspec}
+\\usepackage{graphicx}
+\\usepackage{geometry}
+\\usepackage{listings}
+\\usepackage[dvipsnames, svgnames, x11names]{xcolor}
+\\usepackage{fontspec}
+\\usepackage{mathtools}
+\\usepackage{verbatim}
+\\usepackage{amsthm}
+\\usepackage{fancyhdr}
+\\usepackage{verbatim}
+\\usepackage{pdfpages}
+\\usepackage{setspace}
+\\usepackage[colorlinks=true]{hyperref}
+\\usepackage[BoldFont,SlantFont,CJKchecksingle]{xeCJK}
+\\setCJKmainfont{PingFang SC}
+\\setCJKsansfont{Heiti SC}
+\\setCJKmonofont{PingFang SC}
+\\usepackage{indentfirst}
+\\setlength{\\parindent}{2em}
+\\linespread{1.2}
+\\usepackage{titlesec}
+"
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
+
+
+
+
+(add-to-list 'org-latex-classes '("ebook"
+                                  "\\documentclass[11pt, oneside]{memoir}
+    \\setstocksize{9in}{6in}
+    \\settrimmedsize{\\stockheight}{\\stockwidth}{*}
+    \\setlrmarginsandblock{2cm}{2cm}{*} % Left and right margin
+    \\setulmarginsandblock{2cm}{2cm}{*} % Upper and lower margin
+    \\checkandfixthelayout
+    % Much more laTeX code omitted
+    "
+                                  ("\\chapter{%s}" . "\\chapter*{%s}")
+                                  ("\\section{%s}" . "\\section*{%s}")
+                                  ("\\subsection{%s}" . "\\subsection*{%s}")))
+
 ;; setup icalendar
 ;; advice to org-icalendar--valarm
 ;; we need entry argument, so this function is a goog choice.
