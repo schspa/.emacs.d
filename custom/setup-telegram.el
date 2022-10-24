@@ -22,11 +22,14 @@
 ;;
 
 ;;; Code:
+(use-package visual-fill-column
+  :ensure t)
+
 (use-package telega
   :quelpa (:fetcher github
                     :repo "zevlg/telega.el"
                     :branch "master"
-                    :files (:defaults "etc" "server" "Makefile"))
+                    :files ("*"))
   :commands (telega)
   :config
   (setq telega-proxies

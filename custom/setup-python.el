@@ -18,9 +18,6 @@
  'org-babel-load-languages
  '((python . t)))
 
-(use-package pyenv-mode-auto
-  :ensure t)
-
 (use-package lsp-pyright
   :hook (python-mode . (lambda () (require 'lsp-pyright)))
   :init (when (executable-find "python3")

@@ -28,7 +28,7 @@
   :quelpa
   (eaf :fetcher github
        :repo "emacs-eaf/emacs-application-framework"
-       :files ("core" "app" "*.el" "*.py"))
+       :files ("*"))
   :init
   :custom
   (eaf-find-alternate-file-in-dired t)
