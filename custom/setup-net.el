@@ -23,11 +23,17 @@
 ;;
 
 ;;; Code:
-
-
-
+(defun my-check-port (host services)
+  "Check if port is open"
+  (ignore-errors
+    (let ((tcp-process (open-network-stream "tcp-steam" nil host services)))
+      (message "%S" tcp-process)
+      (if tcp-process
+          (progn (delete-process tcp-process)
+                 t)))))
 
 (use-package w3m
+  :commands w3m
   :ensure t
   :config
   (setq w3m-search-default-engine "g")
@@ -44,9 +50,11 @@
        (add-to-list 'w3m-search-engine-alist '("d" "http://dictionary.reference.com/search?q=%s" utf-8))
        (add-to-list 'w3m-search-engine-alist '("j" "http://www.google.com.au/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&btnI=1&q=%s+site:developer.mozilla.org" utf-8))
        ))
-  (setq w3m-command-arguments
-        (nconc w3m-command-arguments
-               '("-o" "http_proxy=http://127.0.0.1:1087/" "-o" "https_proxy=http://127.0.0.1:1087/")))
+  (if (my-check-port "127.0.0.1" 1087)
+      (setq w3m-command-arguments
+            (nconc w3m-command-arguments
+                   '("-o" "http_proxy=http://127.0.0.1:1087/" "-o" "https_proxy=http://127.0.0.1:1087/"))))
+
   :hook
   (w3m-mode . (lambda()
                 (when (>= emacs-major-version 26)
