@@ -165,15 +165,39 @@ Get the drawio note file link path by file-name."
       (when (string-equal (org-element-property :type link) org-drawio-link-prefix)
         link))))
 
+(defun org-drawio-get-page-index-from-name (drawio-path)
+  "Get page index from page name"
+  (let* ((path-args (split-string drawio-path "#"))
+         (file-path (nth 0 path-args))
+         (page-name (nth 1 path-args))
+         (openwith-associations '())
+         (page-index 0))
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      ;; (format-insert-file drawio-path 'plain)
+      (setq dom (libxml-parse-html-region (point-min) (point-max)))
+      ;;(princ "Current buffer content: %s" (buffer-string))
+      ;; (pprint  dom)
+      (dolist (ele (dom-by-tag dom 'diagram))
+        (when (equal (alist-get 'name (nth 1 ele)) page-name)
+          (return page-index))
+        (setq page-index (+ page-index 1))
+        ))))
+
 (defun org-drawio-get-output-file-name-base (drawio-path)
   "Get Output file name for a drawio link, it handle #page-index algorithm"
   (let* ((path-args (split-string drawio-path "#"))
-         (base-path (file-name-base (nth 0 path-args))))
+         (base-path (file-name-base (nth 0 path-args)))
+         (page-name (nth 1 path-args))
+         (page-index (if (string-match "^[0-9]+$" page-name)
+                         (string-to-number page-name)
+                       (org-drawio-get-page-index-from-name drawio-path)
+                       )))
     (cons (nth 0 path-args)
           (if (<= (length path-args) 1)
               (cons (format "%s.%s.png" (or (file-name-directory drawio-path) "") base-path) nil)
-            (cons (format "%s.%s-%s.png" (or (file-name-directory drawio-path) "") base-path (nth 1 path-args))
-                  (string-to-number (nth 1 path-args)))))))
+            (cons (format "%s.%s-%s.png" (or (file-name-directory drawio-path) "") base-path page-index)
+                  page-index)))))
 
 (defun org-drawio-save-image (drawio-path png-path &optional page-index)
   "Convert DRAWIO-PATH to PNG and write it to PNG-PATH."
@@ -184,6 +208,13 @@ Get the drawio note file link path by file-name."
         (progn
           (message "process cmd: %s" process_cmd)
           (call-process-shell-command process_cmd)))))
+
+(defun pprint (form &optional output-stream)
+  (princ (with-temp-buffer
+           (cl-prettyprint form)
+           (buffer-string))
+         output-stream))
+
 
 (defun org-drawio-get-png (drawio-link-path)
   "Get png image data from given DRAWIO-PATH."
@@ -285,6 +316,9 @@ Argument _BACKEND refers to export backend."
       (latex (format "\\includegraphics[width=0.98\\linewidth,keepaspectratio]{%s}"
                      (prog1 png-path
                        (org-drawio-save-image (car path-args) png-path (cddr path-args)))))
+      (rst (format ".. image:: %s"
+                   (prog1 png-path
+                     (org-drawio-save-image (car path-args) png-path (cddr path-args)))))
       )))
 
 ;;;; Functions
