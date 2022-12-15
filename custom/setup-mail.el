@@ -104,18 +104,8 @@
   :group 'mail-work
   :type 'string)
 
-(use-package use-proxy
-  :ensure t)
-
-(defun smtpmail-send-email-with-proxy ()
-  (use-proxy-with-specified-proxies
-   '(("http" . "localhost:1087")
-     ("https" . "localhost:1087"))
-   (smtpmail-send-it)))
-
 (use-package mu4e
   :load-path "/usr/share/emacs/site-lisp/mu4e"
-  :commands mu4e
   :config
   (setq
    mu4e-get-mail-command "offlineimap"
@@ -182,7 +172,7 @@
                     ))))
   )
 
-(setq send-mail-function 'smtpmail-send-email-with-proxy)
+(setq send-mail-function 'smtpmail-send-it)
 
 (use-package org-mime
   :ensure t
