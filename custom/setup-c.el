@@ -1,4 +1,7 @@
 ;; company-c-headers
+
+(require 'cc-mode)
+
 (use-package company-c-headers
   :init
   (add-to-list 'company-backends 'company-c-headers))
