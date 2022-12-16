@@ -34,6 +34,8 @@
   (setq lsp-enable-indentation nil)
   (setq lsp-enable-file-watchers nil)
   ;; (setq lsp-prefer-flymake t)  ; 預設t。flymake替代flycheck
+  (setq lsp-clients-clangd-args
+        '("--header-insertion-decorators=0" "--header-insertion=never"))
   :hook
   (hack-local-variables
    . (lambda ()
