@@ -127,9 +127,13 @@
   ((dired-mode . org-download-enable)
    (org-mode . org-download-enable)))
 
-(let ((font "Sarasa Mono SC"))
-  (when (member font (font-family-list))
-    (set-face-attribute 'org-table nil :family "Sarasa Mono SC")))
+
+(use-package valign
+  :if (display-graphic-p)
+  :ensure t
+  :custom
+  (valign-fancy-bar t)
+  :hook (org-mode . valign-mode))
 
 ;; GTD
 (use-package org-gtd
