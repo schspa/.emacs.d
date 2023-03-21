@@ -87,7 +87,7 @@
   (when (display-graphic-p)
     ;; Set default font
     (catch 'loop
-      (dolist (font '("DejaVu Sans Mono" "Monaco" "SF Mono" "Hack" "Source Code Pro" "Fira Code"
+      (dolist (font '("JetBrains Mono" "DejaVu Sans Mono" "Monaco" "SF Mono" "Hack" "Source Code Pro" "Fira Code"
                       "Menlo" "DejaVu Sans Mono" "Consolas"))
         (when (member font (font-family-list))
           (set-face-attribute 'default nil :font font)
@@ -102,7 +102,7 @@
 
     ;; Specify font for Chinese characters
     (catch 'loop
-      (dolist (font '("PingFang SC" "WenQuanYi Micro Hei" "Microsoft Yahei"))
+      (dolist (font '("JetBrains Mono" "PingFang SC" "WenQuanYi Micro Hei" "Microsoft Yahei"))
         (when (member font (font-family-list))
           (set-fontset-font t '(#x4e00 . #x9fff) font)
           (message font)

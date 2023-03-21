@@ -137,3 +137,5 @@
 
 
 (put 'magit-clean 'disabled nil)
+(put 'set-goal-column 'disabled nil)
+(put 'magit-diff-edit-hunk-commit 'disabled nil)
