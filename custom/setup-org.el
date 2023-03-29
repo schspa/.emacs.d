@@ -337,6 +337,22 @@ org-protocol://gdt?id=CBEC8DD1-7814-44A7-AA3D-97AEC35B6DB7"
   :custom
   (org-reveal-revealjs-version "4.1.0")
   (org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js@4.1.0"))
+
+(use-package org-xournalpp
+  :ensure t
+  :quelpa (org-xournalpp :fetcher gitlab :repo "vherrmann/org-xournalpp" :files ("*.el" "resources"))
+  :custom
+  (org-xournalpp-image-type "png")
+  :config
+  (add-hook 'org-mode-hook 'org-xournalpp-mode))
+
+(let ((ox-feishu-dir (expand-file-name "~/work/src/ox-feishu")))
+  (if (file-accessible-directory-p ox-feishu-dir)
+      (lambda
+        (add-to-list 'load-path ox-feishu-dir)
+        (require 'ox-feishu)
+        )))
+
 ;;set agenda files
 (provide 'setup-org)
 
