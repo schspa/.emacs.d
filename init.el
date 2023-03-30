@@ -56,6 +56,10 @@
 (defvar my-cache-dir (expand-file-name ".cache" user-emacs-directory)
   "My cache directory")
 
+;; Set eln-cache dir
+(when (boundp 'native-comp-eln-load-path)
+  (startup-redirect-eln-cache (expand-file-name "eln-cache" my-cache-dir)))
+
 (use-package quelpa
   :ensure t
   :init

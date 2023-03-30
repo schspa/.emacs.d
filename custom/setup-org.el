@@ -140,6 +140,8 @@
   :ensure t
   :after org
   :demand t ;; without this, the package won't be loaded, so org-agenda won't be configured
+  :init
+  (setq org-gtd-update-ack "2.1.0")
   :custom
   ;; where org-gtd will put its files. This value is also the default one.
   (org-gtd-directory "~/org/gtd/")
