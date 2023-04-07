@@ -142,8 +142,9 @@
 
 (use-package dashboard
   :ensure t
-  :config
+  :init
   (dashboard-setup-startup-hook)
+  :config
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
   (setq dashboard-items '((recents . 10)
 						  (projects . 5)

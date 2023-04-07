@@ -85,6 +85,35 @@ Return nil if non match"
   "Extract the path from the buffer name."
   (file-relative-name buffer-file-name (vc-git-root buffer-file-name)))
 
+(defun run-shell-command-in-project-root-at-file-path (command file-path)
+  "Run a shell command in the project root directory of FILE-PATH."
+  (interactive "sShell command: \nFFile path: ")
+  (let* ((project-root (projectile-project-root (file-name-directory file-path)))
+         (default-directory project-root)
+         (output-buffer (generate-new-buffer "*Shell Command Output*"))
+         (exit-code (call-process-shell-command command nil output-buffer t)))
+    (if (zerop exit-code)
+        (with-current-buffer output-buffer
+          (buffer-string))
+      (progn
+        (message "Shell command failed with exit code %d." exit-code)
+        (let ((stdout (with-current-buffer output-buffer
+                        (buffer-string)))
+              (stderr (with-current-buffer (get-buffer "*Messages*")
+                        (buffer-string))))
+          (kill-buffer output-buffer)
+          (error "Shell command failed.\nSTDOUT:\n%s\nSTDERR:\n%s" stdout stderr))))))
+
+
+
+(defun org-srclink-export-to-latex (file-path)
+  "Export a file as latex"
+  (let* ((real-file-path (file-truename file-path))
+         (project-root (projectile-project-root (file-name-directory real-file-path)))
+         (relative-path (file-relative-name real-file-path project-root)))
+    (message (format "Export %s to latex" file-path))
+    (run-shell-command-in-project-root-at-file-path (format "~/work/src/coordinator/scripts/doxygen_xml_to_docx.py %s" relative-path) real-file-path)))
+
 (org-link-set-parameters
  "srclink"
  :follow #'org-srclink-open-as-file
@@ -102,7 +131,7 @@ Return nil if non match"
          (desc (or description link)))
     (pcase linkformat
       (`html (format (plist-get (org-srclink-get-repo-by-name repo) :html-link-fmt) revision path line desc))
-      (`latex (format "\\href{%s}{%s}" path desc))
+      (`latex (org-srclink-export-to-latex (if path path link)))
       (`texinfo (format "@uref{%s,%s}" path desc))
       (`ascii (format "%s (%s)" desc path))
       (t path))))
