@@ -133,6 +133,23 @@ class DoxygenFunction():
     def __expr__(self):
         return self.__str__()
 
+    def to_html(self):
+        ts = '<h6>' + self.func['name'] + '</h6>\n'
+        ts += '''<table>\n'''
+        ts += '''\t<tr>\n\t\t<td>{:s}</td>\n\t\t<td>{:s}</td>\n\t</tr>\n'''.format('name', self.func['name'])
+        for k, params in self.params.items():
+            for param in params:
+                for pk, v in param.items():
+                    ts += '''\t<tr>
+                    <td>{:s}</td>
+                    <td>{:s}</td>
+                    <td>{:s}</td>
+\t</tr>
+                    '''.format(k, pk, v)
+
+        ts += '''\n</table>'''
+        return ts
+
     def to_latex(self):
         ts = '\subsubsection{' + self.func['name'] + '}\n'
         ts += r'''
@@ -194,6 +211,13 @@ class DoxygenSection():
 
         return resp
 
+    def to_html(self):
+        resp = '<h5>' + self.kind + '</h5>\n'
+        for mem in self.mems:
+            if mem is not None:
+                resp += mem.to_html()
+        return resp
+
 
 class DoxygenFile():
 
@@ -233,6 +257,14 @@ class DoxygenFile():
         for sec in self.sections:
             if sec is not None:
                 rep += sec.to_latex()
+
+        return rep
+
+    def to_html(self):
+        rep = ''
+        for sec in self.sections:
+            if sec is not None:
+                rep += sec.to_html()
 
         return rep
 
@@ -285,7 +317,8 @@ if __name__ == "__main__":
             files = list(filter(lambda x: x['@kind'] == 'file', data_dict['doxygenindex']['compound']))
             for f in files:
                 if re.match(file_regrex, f['name']):
-                    ef = getattr(BuildObjectFromKind(f), 'to_' + export_type, None)
+                    fo = BuildObjectFromKind(f)
+                    ef = getattr(fo, 'to_' + export_type, None)
                     if ef is not None:
                         print(ef())
                     else:
@@ -293,7 +326,7 @@ if __name__ == "__main__":
                             'html': '<strong>export to html not supported!!</strong>',
                             'latex': '\textbf{export to latex not supported!!}'
                         }
-                        print(not_supported_preempt[export_type])
+                        print(fo.__class__.__name__ + not_supported_preempt[export_type])
 
     @click.command()
     @click.option('--file_regrex', default='^.*$', help='File filter.', type=str)
