@@ -106,13 +106,13 @@ Return nil if non match"
 
 
 
-(defun org-srclink-export-to-latex (file-path)
+(defun org-srclink-export-to (file-path export-type)
   "Export a file as latex"
   (let* ((real-file-path (file-truename file-path))
          (project-root (projectile-project-root (file-name-directory real-file-path)))
          (relative-path (file-relative-name real-file-path project-root)))
     (message (format "Export %s to latex" file-path))
-    (run-shell-command-in-project-root-at-file-path (format "~/work/src/coordinator/scripts/doxygen_xml_to_docx.py %s" relative-path) real-file-path)))
+    (run-shell-command-in-project-root-at-file-path (format "%s --export_type %s %s" (expand-file-name "bin/doxygen-source-export.py" user-emacs-directory) export-type relative-path) real-file-path)))
 
 (org-link-set-parameters
  "srclink"
@@ -130,8 +130,8 @@ Return nil if non match"
          (revision (nth 3 link-params))
          (desc (or description link)))
     (pcase linkformat
-      (`html (format (plist-get (org-srclink-get-repo-by-name repo) :html-link-fmt) revision path line desc))
-      (`latex (org-srclink-export-to-latex (if path path link)))
+      (`html (org-srclink-export-to (if path path link) "html"))
+      (`latex (org-srclink-export-to (if path path link) "latex"))
       (`texinfo (format "@uref{%s,%s}" path desc))
       (`ascii (format "%s (%s)" desc path))
       (t path))))
