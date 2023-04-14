@@ -142,6 +142,7 @@
 
 (use-package dashboard
   :ensure t
+  :if (not noninteractive)
   :init
   (dashboard-setup-startup-hook)
   :config
