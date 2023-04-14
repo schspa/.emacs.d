@@ -126,6 +126,20 @@ regular expression will be included."
   :group 'schspa
   :type 'regexp)
 
+(require 'cl-lib)
+
+(defun my-directory-files-recursively (dir regex exclude-dirs)
+  "Return a list of all files under DIR that match REGEX, excluding directories and their contents in EXCLUDE-DIRS."
+  (let ((files (directory-files-recursively dir regex)))
+    (cl-remove-if (lambda (file)
+                    (let ((truename (file-truename file))
+                          (parent (file-name-directory (file-truename file))))
+                      (or (member parent (mapcar #'file-truename exclude-dirs))
+                          (some (lambda (exclude)
+                                  (string-prefix-p (file-truename exclude) truename))
+                                exclude-dirs))))
+                  files)))
+
 (defun schspa/getposts-info (filePath)
   "Return posts file information"
   (let ((my-posts ())
@@ -148,7 +162,7 @@ regular expression will be included."
                 fileprops)))
          'add-to-blogs
          ))
-     (directory-files-recursively filePath org-posts-file-regexp))
+     (my-directory-files-recursively filePath org-posts-file-regexp (mapcar (lambda (e) (expand-file-name e filePath)) '("logseq" ".git"))))
     (write-region
      (json-encode my-posts) nil
      (expand-file-name "blogs.json" org-blogs-output-path))

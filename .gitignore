@@ -9,3 +9,5 @@ tramp
 session.*
 .*
 transient/
+eln-cache/
+projects

@@ -1,4 +1,4 @@
-;;; setup-mail.el --- setup email
+;;; setup-mail.el --- setup email -*- lexical-binding: t -*-
 
 ;; Author: schspa  schspa@gmail.com
 ;; URL:
@@ -68,8 +68,6 @@
          (mail-conf (json-parse-string json-string :object-type 'alist)))
     (cdr (assoc attribute mail-conf))))
 
-(setq auth-sources '("~/.authinfo.gpg"))
-
 (defgroup mail-work nil
   "Facilities for work environment mail to work."
   :group 'development)
@@ -104,6 +102,12 @@
   :group 'mail-work
   :type 'string)
 
+;; use auth-source to open ~/.authinfo.gpg, thus to avoid to input password
+(defun schspa/mu4e-update-mail-and-index (orig-fun prefix &rest args)
+  (interactive "P")
+  (auth-source-search :host "smtp.gmail.com")
+  (funcall orig-fun args))
+
 (use-package mu4e
   :load-path "/usr/share/emacs/site-lisp/mu4e"
   :config
@@ -112,6 +116,8 @@
    mu4e-update-interval 300
    mu4e-headers-auto-update t
    mu4e-compose-format-flowed nil)
+  (advice-add 'mu4e-update-mail-and-index
+              :around #'schspa/mu4e-update-mail-and-index)
   (setq mu4e-contexts
         `( ,(make-mu4e-context
 	         :name "Private"
