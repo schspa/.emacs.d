@@ -43,6 +43,25 @@ def BuildObjectFromKind(obj):
     return pc(obj)
 
 
+def dict_to_latex_table(my_dict):
+    table_str = "\\begin{tabular}{ |p{3cm}|p{8cm}| }\n"
+    table_str += "\\hline\n"
+
+    for key, value in my_dict.items():
+        # Escape special characters in the value string
+        value = value.replace("_", "\_").replace("&", "\&")
+        if "\n" in value:
+            num_rows = value.count("\n") + 1
+            table_str += f"\\multirow{{{num_rows}}}{{*}}{{{key}}} & "
+            table_str += value.replace("\n", f" \\\\ \\cline{{2-2}} & ")
+        else:
+            table_str += f"{key} & {value}"
+        table_str += " \\\\ \n"
+
+    table_str += "\\hline\n"
+    table_str += "\\end{tabular}"
+    return table_str
+
 class DoxygenFunction():
     '''
       <memberdef kind="function" id="hb__bpu__scheduler_8h_1af0fe47211cfe042f1d885779259ae515" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -96,12 +115,19 @@ class DoxygenFunction():
 
     def parse_single_param(self, param):
 
+        param_dir = 'in'
         param_detail = functools.reduce(lambda a, b: a+b, param['parameterdescription']['para'])
         param_name = param['parameternamelist']['parametername']
 
         if isinstance(param_name, dict):
+            param_dir = param_name['@direction']
             param_name = param_name['#text']
-        return {param_name : param_detail}
+        return {
+            param_name : {
+                'detail': param_detail,
+                'dir': param_dir
+            }
+        }
 
 
     def parse_param(self, params):
@@ -133,41 +159,96 @@ class DoxygenFunction():
     def __expr__(self):
         return self.__str__()
 
-    def to_html(self):
-        ts = '<h6>' + self.func['name'] + '</h6>\n'
-        ts += '''<table>\n'''
-        ts += '''\t<tr>\n\t\t<td>{:s}</td>\n\t\t<td>{:s}</td>\n\t</tr>\n'''.format('name', self.func['name'])
-        for k, params in self.params.items():
-            for param in params:
-                for pk, v in param.items():
-                    ts += '''\t<tr>
-                    <td>{:s}</td>
-                    <td>{:s}</td>
-                    <td>{:s}</td>
-\t</tr>
-                    '''.format(k, pk, v)
+    def html_tag_wrap(tn, tv):
+        return f'<{tn}>{tv}</{tn}>'
 
-        ts += '''\n</table>'''
-        return ts
+    def to_html(self):
+
+        finput = ''
+        foutput = ''
+        fcalls = "NA"
+        fcalled = "NA"
+        fother = "NA"
+        fdesign = "NA"
+
+        for param in self.params.get('param', []):
+
+            for k, v in param.items():
+                param_str = '{:s} :: {:s}'.format(k, v['detail'])
+                if v['dir'] == 'in':
+                    if finput != '':
+                        finput += '<br>'
+                    finput += param_str
+                if v['dir'] == 'out':
+                    if foutput != '':
+                        foutput += '<br>'
+                    foutput += param_str
+
+        return '''
+    <h6>{fname:s}<h6>
+    <table>
+      <tbody>
+        <tr> <th colspan="2">{fname:s}</th></tr>
+        <tr> <td>Description</td> <td>{fdesc:s}</td></tr>
+        <tr> <td>ASIL</td> <td>B</td></tr>
+        <tr> <td>INPUT</td> <td>{finput:s}</td></tr>
+        <tr> <td>Output</td> <td>{foutput:s}</td></tr>
+        <tr> <td>Calls</td> <td>{fcalls:s}</td></tr>
+        <tr> <td>Called by</td> <td>{fcalled:s}</td></tr>
+        <tr> <td>Others</td> <td>NA</td></tr>
+        <tr> <td>Design</td> <td>{fdesign:s}</td></tr>
+      </tbody>
+    </table>
+'''.format(fname = self.func['name'], fdesc = self.func['name'], finput = finput, foutput = foutput, fcalls = fcalls, fcalled = fcalled, fdesign = fdesign)
+#         ts = '<h6>' + self.func['name'] + '</h6>\n'
+#         ts += '''<table>\n'''
+#         ts += '''\t<tr>\n\t\t<th>{:s}</th>\n\t\t<th>{:s}</th>\n\t</tr>\n'''.format('name', self.func['name'])
+#         for k, params in self.params.items():
+#             for param in params:
+#                 for pk, v in param.items():
+#                     ts += '''\t<tr>
+#                     <td>{:s}</td>
+#                     <td>{:s}</td>
+#                     <td>{:s}</td>
+# \t</tr>
+#                     '''.format(k, pk, v)
+
+#         ts += '''\n</table>'''
+#         return ts
 
     def to_latex(self):
+        finput = ''
+        foutput = ''
+        fcalls = "NA"
+        fcalled = "NA"
+        fother = "NA"
+        fdesign = "NA"
+        my_dict = {
+            'Name' : self.func['name'],
+            'Description' : '',
+            'ASIL': 'B',
+            'INPUT': '',
+            'OUTPUT': '',
+            'Calls' : 'NA',
+            'Called': 'NA',
+            'Others': 'NA',
+            'Design': 'NA'
+        }
+
+        for param in self.params.get('param', []):
+
+            for k, v in param.items():
+                param_str = '{:s} :: {:s}'.format(k, v['detail'])
+                key = 'INPUT'
+                if v['dir'] == 'out':
+                    key = 'OUTPUT'
+                if my_dict[key] != '':
+                    my_dict[key] += '\n'
+                my_dict[key] += param_str
+
+
         ts = '\subsubsection{' + self.func['name'] + '}\n'
-        ts += r'''
-\begin{center}
-\begin{tabular}{ c c }
-'''
-        ts = ts + 'name & ' + self.func['name'] +  '\\\\\n'
-        for k, params in self.params.items():
-            for param in params:
-                for pk, v in param.items():
-                    ts += k + ' & '
-                    ts += f'{pk} : {v}'
-                    ts += '\\\\\n'
-        ts = ts +'''
-\end{tabular}
-\end{center}
-'''
-        return ts
+        return ts + dict_to_latex_table(my_dict)
 
 class DoxygenSection():
     '''

@@ -111,7 +111,7 @@ Return nil if non match"
   (let* ((real-file-path (file-truename file-path))
          (project-root (projectile-project-root (file-name-directory real-file-path)))
          (relative-path (file-relative-name real-file-path project-root)))
-    (message (format "Export %s to latex" file-path))
+    (message (format "Export %s to %s" real-file-path export-type))
     (run-shell-command-in-project-root-at-file-path (format "%s --export_type %s %s" (expand-file-name "bin/doxygen-source-export.py" user-emacs-directory) export-type relative-path) real-file-path)))
 
 (org-link-set-parameters
