@@ -104,15 +104,26 @@ Return nil if non match"
           (kill-buffer output-buffer)
           (error "Shell command failed.\nSTDOUT:\n%s\nSTDERR:\n%s" stdout stderr))))))
 
+(defcustom oorg-srclink-export-file-content nil
+  "Enable xref integration."
+  :type 'boolean
+  :group 'org-link)
 
+(put 'org-srclink-export-file-content 'safe-local-variable #'booleanp)
+(make-variable-buffer-local 'org-srclink-export-file-content)
 
-(defun org-srclink-export-to (file-path export-type)
+(defun org-srclink-export-to (file-path export-type repo revision path line desc)
   "Export a file as latex"
   (let* ((real-file-path (file-truename file-path))
          (project-root (projectile-project-root (file-name-directory real-file-path)))
          (relative-path (file-relative-name real-file-path project-root)))
-    (message (format "Export %s to %s" real-file-path export-type))
-    (run-shell-command-in-project-root-at-file-path (format "%s --export_type %s %s" (expand-file-name "bin/doxygen-source-export.py" user-emacs-directory) export-type relative-path) real-file-path)))
+    (if org-srclink-export-file-content
+        (progn
+          (message (format "Export %s to %s" real-file-path export-type))
+          (run-shell-command-in-project-root-at-file-path (format "%s --export_type %s %s" (expand-file-name "bin/doxygen-source-export.py" user-emacs-directory) export-type relative-path) real-file-path)
+          )
+      (format (plist-get (org-srclink-get-repo-by-name repo) :html-link-fmt) revision path line desc)
+      )))
 
 (org-link-set-parameters
  "srclink"
@@ -130,8 +141,8 @@ Return nil if non match"
          (revision (nth 3 link-params))
          (desc (or description link)))
     (pcase linkformat
-      (`html (org-srclink-export-to (if path path link) "html"))
-      (`latex (org-srclink-export-to (if path path link) "latex"))
+      (`html (org-srclink-export-to (if path path link) "html" repo revision path line desc))
+      (`latex (org-srclink-export-to (if path path link) "latex" repo revision path line desc))
       (`texinfo (format "@uref{%s,%s}" path desc))
       (`ascii (format "%s (%s)" desc path))
       (t path))))

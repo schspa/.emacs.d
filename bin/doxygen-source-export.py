@@ -44,7 +44,7 @@ def BuildObjectFromKind(obj):
 
 
 def dict_to_latex_table(my_dict):
-    table_str = "\\begin{tabular}{ |p{3cm}|p{8cm}| }\n"
+    table_str = "\\begin{tabular}{ |p{3cm}|p{16cm}| }\n"
     table_str += "\\hline\n"
 
     for key, value in my_dict.items():

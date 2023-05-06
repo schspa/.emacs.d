@@ -143,7 +143,7 @@
 
 (org-srclink-set-parameters
  "atf"
- :localpath (expand-file-name "~/work/src/optee/trusted-firmware-a")
+ :localpath (expand-file-name "~/work/src/arm-trusted-firmware")
  :html-link-fmt "<a target=\"_blank\" href=\"https://github.com/ARM-software/arm-trusted-firmware/blob/%s/%s#L%s\">%s</a>")
 
 (org-srclink-set-parameters
