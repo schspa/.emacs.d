@@ -34,6 +34,14 @@ import functools
 
 base_dir = None
 
+latex_headings = [
+    '\section',
+    '\subsection',
+    '\subsubsection',
+    '\paragraph',
+    '\subparagraph',
+]
+
 def BuildObjectFromKind(obj):
 
     pc = cparsers.get(obj['@kind'], None)
@@ -162,7 +170,7 @@ class DoxygenFunction():
     def html_tag_wrap(tn, tv):
         return f'<{tn}>{tv}</{tn}>'
 
-    def to_html(self):
+    def to_html(self, heading_level = 0):
 
         finput = ''
         foutput = ''
@@ -185,7 +193,7 @@ class DoxygenFunction():
                     foutput += param_str
 
         return '''
-    <h6>{fname:s}<h6>
+    <h{hl:d}>{fname:s}<h{hl:d}>
     <table>
       <tbody>
         <tr> <th colspan="2">{fname:s}</th></tr>
@@ -199,7 +207,7 @@ class DoxygenFunction():
         <tr> <td>Design</td> <td>{fdesign:s}</td></tr>
       </tbody>
     </table>
-'''.format(fname = self.func['name'], fdesc = self.func['name'], finput = finput, foutput = foutput, fcalls = fcalls, fcalled = fcalled, fdesign = fdesign)
+'''.format(fname = self.func['name'], fdesc = self.func['name'], finput = finput, foutput = foutput, fcalls = fcalls, fcalled = fcalled, fdesign = fdesign, hl = heading_level)
 #         ts = '<h6>' + self.func['name'] + '</h6>\n'
 #         ts += '''<table>\n'''
 #         ts += '''\t<tr>\n\t\t<th>{:s}</th>\n\t\t<th>{:s}</th>\n\t</tr>\n'''.format('name', self.func['name'])
@@ -216,7 +224,7 @@ class DoxygenFunction():
 #         ts += '''\n</table>'''
 #         return ts
 
-    def to_latex(self):
+    def to_latex(self, heading_level = 0):
         finput = ''
         foutput = ''
         fcalls = "NA"
@@ -247,7 +255,7 @@ class DoxygenFunction():
                 my_dict[key] += param_str
 
 
-        ts = '\subsubsection{' + self.func['name'] + '}\n'
+        ts = latex_headings[heading_level] + '{' + self.func['name'] + '}\n'
         return ts + dict_to_latex_table(my_dict)
 
 class DoxygenSection():
@@ -263,6 +271,9 @@ class DoxygenSection():
         # sec is a object
         self.data_dict = sec
         self.mems = []
+        self.section_title = {
+            'func': "数据和结构"
+        }
 
         if isinstance(sec['memberdef'], dict):
             self.mems.append(BuildObjectFromKind(sec['memberdef'], ['function']))
@@ -284,16 +295,16 @@ class DoxygenSection():
     def __expr__(self):
         return self.___str___()
 
-    def to_latex(self):
-        resp = '\subsection{' + self.kind + '}\n'
+    def to_latex(self, heading_level = 0):
+        resp = latex_headings[heading_level] + '{' + self.section_title[self.kind] + '}\n'
         for mem in self.mems:
             if mem is not None:
-                resp += mem.to_latex()
+                resp += mem.to_latex(heading_level + 1)
 
         return resp
 
-    def to_html(self):
-        resp = '<h5>' + self.kind + '</h5>\n'
+    def to_html(self, heading_level = 0):
+        resp = '<h' + str(heading_level) + '>' + self.section_title[self.kind] + '</h' + str(heading_level) +'>\n'
         for mem in self.mems:
             if mem is not None:
                 resp += mem.to_html()
@@ -333,19 +344,19 @@ class DoxygenFile():
             secs.append(BuildObjectFromKind(secdef, ['func']))
         return secs
 
-    def to_latex(self):
+    def to_latex(self, heading_level = 0):
         rep = ''
         for sec in self.sections:
             if sec is not None:
-                rep += sec.to_latex()
+                rep += sec.to_latex(heading_level)
 
         return rep
 
-    def to_html(self):
+    def to_html(self, heading_level = 0):
         rep = ''
         for sec in self.sections:
             if sec is not None:
-                rep += sec.to_html()
+                rep += sec.to_html(heading_level)
 
         return rep
 
@@ -390,7 +401,7 @@ if __name__ == "__main__":
     import click
     import re
 
-    def doxygen_xml_export(file_regrex, filename, export_type = 'html'):
+    def doxygen_xml_export(file_regrex, filename, export_type = 'html', heading_level = 0):
         global base_dir
         base_dir = os.path.dirname(os.path.realpath(filename))
         with open(filename) as xml_file:
@@ -401,7 +412,7 @@ if __name__ == "__main__":
                     fo = BuildObjectFromKind(f)
                     ef = getattr(fo, 'to_' + export_type, None)
                     if ef is not None:
-                        print(ef())
+                        print(ef(heading_level))
                     else:
                         not_supported_preempt = {
                             'html': '<strong>export to html not supported!!</strong>',
@@ -414,7 +425,8 @@ if __name__ == "__main__":
     @click.argument('filename', type=click.Path(exists=True))
     @click.option('--export_type',
                   type=click.Choice(['html', 'latex'], case_sensitive=False), default='html')
-    def src_to_latex(file_regrex, filename, export_type):
+    @click.option('--heading_level', default=2, help='Heading level', type=int)
+    def src_to_latex(file_regrex, filename, export_type, heading_level):
         """Convert source code to latex."""
         logging.basicConfig(format='%(levelname)s[%(filename)s:%(funcName)s():%(lineno)s]: %(message)s', level=logging.DEBUG)
 
@@ -444,7 +456,7 @@ GENERATE_XML = YES
                     print("Doxygen process failed with status {:d} --> {:s}" % (retcode, output))
                     exit (-1)
 
-                doxygen_xml_export(file_regrex, os.path.join(temp_dir, 'xml/index.xml'), export_type)
+                doxygen_xml_export(file_regrex, os.path.join(temp_dir, 'xml/index.xml'), export_type, heading_level)
 
 
     src_to_latex()
