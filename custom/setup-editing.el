@@ -76,7 +76,8 @@
   :config
   (cond (sys/macp (sis-ism-lazyman-config
                    "com.apple.keylayout.ABC"
-                   "im.rime.inputmethod.Squirrel.Rime"))
+                   ;; https://github.com/rime/squirrel/commit/5b981dc0528fadfed36d7b2e456d23ab6229774e
+                   "im.rime.inputmethod.Squirrel.Hans"))
         ((string-equal (getenv "GTK_IM_MODULE") "fcitx")
          (sis-ism-lazyman-config "1" "2" 'fcitx5))
         ((t (sis-ism-lazyman-config "xkb:us::eng" "rime" 'ibus))))
