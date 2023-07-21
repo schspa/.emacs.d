@@ -350,7 +350,7 @@ org-protocol://gdt?id=CBEC8DD1-7814-44A7-AA3D-97AEC35B6DB7"
 
 (let ((ox-feishu-dir (expand-file-name "~/work/src/ox-feishu")))
   (if (file-accessible-directory-p ox-feishu-dir)
-      (lambda
+      (progn
         (add-to-list 'load-path ox-feishu-dir)
         (require 'ox-feishu)
         )))
