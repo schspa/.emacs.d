@@ -42,13 +42,13 @@ latex_headings = [
     '\subparagraph',
 ]
 
-def BuildObjectFromKind(obj):
+def BuildObjectFromKind(obj, parent):
 
     pc = cparsers.get(obj['@kind'], None)
     if pc is None:
         print(f'Missing Parser for {obj["@kind"]}')
 
-    return pc(obj)
+    return pc(obj, parent)
 
 
 def dict_to_latex_table(my_dict):
@@ -67,8 +67,21 @@ def dict_to_latex_table(my_dict):
         table_str += " \\\\ \n"
 
     table_str += "\\hline\n"
-    table_str += "\\end{tabular}"
+    table_str += "\\end{tabular}\n"
     return table_str
+
+def parse_dict_or_list(objs, parser):
+    res = []
+    if isinstance(objs, list):
+        for obj in objs:
+            res.append(parser(obj))
+    if isinstance(objs, dict):
+        res.append(parser(objs))
+
+    return res
+
+
+function_index = 0
 
 class DoxygenFunction():
     '''
@@ -95,7 +108,11 @@ class DoxygenFunction():
       </memberdef>
     '''
 
-    def __init__(self, func):
+    def __init__(self, func, parent):
+        global function_index
+        self.interface_idx = function_index;
+
+        function_index = function_index + 1;
         self.func = func
         self.params = {
         }
@@ -106,20 +123,16 @@ class DoxygenFunction():
         sys.setrecursionlimit(150000)
         self.parse_objects(self.func)
         sys.setrecursionlimit(recursionlimit)
+        self.comp = parent.comp
+        self.fname = '{:s}|{:04d}: {:s}'.format(self.comp, self.interface_idx, self.func['name'])
 
     @property
     def name(self):
         return self.func['name']
 
-    def parse_dict_or_list(self, objs, parser):
-        res = []
-        if isinstance(objs, list):
-            for obj in objs:
-                res.append(parser(obj))
-        if isinstance(objs, dict):
-            res.append(parser(objs))
-
-        return res
+    @property
+    def interface_number(self):
+        return '{:s}|{:04d}'.format(self.comp, self.interface_idx)
 
     def parse_single_param(self, param):
 
@@ -140,13 +153,13 @@ class DoxygenFunction():
 
     def parse_param(self, params):
         param_type = params['@kind']
-        param_content = self.parse_dict_or_list(params['parameteritem'], self.parse_single_param)
+        param_content = parse_dict_or_list(params['parameteritem'], self.parse_single_param)
 
         self.params[param_type] = param_content
 
     def get_params(self, parameterlist):
         #pprint(parameterlist)
-        self.parse_dict_or_list(parameterlist, self.parse_param)
+        parse_dict_or_list(parameterlist, self.parse_param)
 
     def parse_objects(self, objs = None):
         if isinstance(objs, dict):
@@ -207,7 +220,7 @@ class DoxygenFunction():
         <tr> <td>Design</td> <td>{fdesign:s}</td></tr>
       </tbody>
     </table>
-'''.format(fname = self.func['name'], fdesc = self.func['name'], finput = finput, foutput = foutput, fcalls = fcalls, fcalled = fcalled, fdesign = fdesign, hl = heading_level)
+'''.format(fname = self.fname, fdesc = self.func['name'], finput = finput, foutput = foutput, fcalls = fcalls, fcalled = fcalled, fdesign = fdesign, hl = heading_level)
 #         ts = '<h6>' + self.func['name'] + '</h6>\n'
 #         ts += '''<table>\n'''
 #         ts += '''\t<tr>\n\t\t<th>{:s}</th>\n\t\t<th>{:s}</th>\n\t</tr>\n'''.format('name', self.func['name'])
@@ -232,7 +245,7 @@ class DoxygenFunction():
         fother = "NA"
         fdesign = "NA"
         my_dict = {
-            'Name' : self.func['name'],
+            'Name' : self.fname,
             'Description' : '',
             'ASIL': 'B',
             'INPUT': '',
@@ -255,7 +268,7 @@ class DoxygenFunction():
                 my_dict[key] += param_str
 
 
-        ts = latex_headings[heading_level] + '{' + self.func['name'] + '}\n'
+        ts = latex_headings[heading_level] + '{' + self.fname + '}\n'
         return ts + dict_to_latex_table(my_dict)
 
 class DoxygenSection():
@@ -267,20 +280,25 @@ class DoxygenSection():
 </sectiondef>
     '''
 
-    def __init__(self, sec):
+    def __init__(self, sec, parent):
         # sec is a object
         self.data_dict = sec
         self.mems = []
         self.section_title = {
-            'func': "数据和结构"
+            'func': "外部接口"
         }
+        self.compon = getattr(parent, 'comp', '')
 
         if isinstance(sec['memberdef'], dict):
-            self.mems.append(BuildObjectFromKind(sec['memberdef'], ['function']))
+            self.mems.append(BuildObjectFromKind(sec['memberdef'], ['function'], self))
 
         if isinstance(sec['memberdef'], list):
             for memb in self.data_dict['memberdef']:
-                self.mems.append(BuildObjectFromKind(memb, ['function']))
+                self.mems.append(BuildObjectFromKind(memb, ['function'], self))
+
+    @property
+    def comp(self):
+        return self.compon
 
     @property
     def kind(self):
@@ -296,7 +314,15 @@ class DoxygenSection():
         return self.___str___()
 
     def to_latex(self, heading_level = 0):
-        resp = latex_headings[heading_level] + '{' + self.section_title[self.kind] + '}\n'
+        resp = '\n'
+        my_dict = {
+            'Interface number' : 'Interface'
+        }
+        for mem in self.mems:
+            if mem is not None:
+                my_dict[mem.interface_number] = mem.name
+        resp += dict_to_latex_table(my_dict)
+
         for mem in self.mems:
             if mem is not None:
                 resp += mem.to_latex(heading_level + 1)
@@ -310,18 +336,34 @@ class DoxygenSection():
                 resp += mem.to_html()
         return resp
 
-
 class DoxygenFile():
 
     exclude_langs = [
         'Markdown',
         'Python'
     ]
-    def __init__(self, f):
+
+    def parse_line(self, hc):
+        #pprint(hc)
+        if hc['@class'] != 'comment':
+            return
+        obj = re.search(self.comp_match, hc['#text'])
+        if obj:
+            self.comp = obj.group("COMP")
+            return
+
+    def get_comp_no(self):
+        from pprint import pprint
+        for line in self.data_dict['doxygen']['compounddef']['programlisting']['codeline']:
+            parse_dict_or_list(line['highlight'], self.parse_line)
+
+    def __init__(self, f, parent):
+        self.comp_match = re.compile(r'@NO{(?P<COMP>[A-Za-z0-9]+)}')
         xml_file = os.path.join(base_dir, f['@refid'] + '.xml')
         self.f = xml_file
         with open(xml_file) as f:
             self.data_dict = xmltodict.parse(f.read())
+            self.get_comp_no()
 
     def get_function(self):
         return None
@@ -338,10 +380,10 @@ class DoxygenFile():
         secdef = self.data_dict['doxygen']['compounddef']['sectiondef']
         if isinstance(secdef, list):
             for sec in secdef:
-                secs.append(BuildObjectFromKind(sec, ['func']))
+                secs.append(BuildObjectFromKind(sec, ['func'], self))
 
         if isinstance(secdef, dict):
-            secs.append(BuildObjectFromKind(secdef, ['func']))
+            secs.append(BuildObjectFromKind(secdef, ['func'], self))
         return secs
 
     def to_latex(self, heading_level = 0):
@@ -381,7 +423,7 @@ cparsers = {
     'func': DoxygenSection,
 }
 
-def BuildObjectFromKind(obj, allowed_kind = None):
+def BuildObjectFromKind(obj, allowed_kind = None, parent = None):
 
     kind = obj['@kind']
     if allowed_kind is not None:
@@ -394,14 +436,14 @@ def BuildObjectFromKind(obj, allowed_kind = None):
         print(f'Missing Parser for {kind}')
         return None
 
-    return pc(obj)
+    return pc(obj, parent)
 
 if __name__ == "__main__":
 
     import click
     import re
 
-    def doxygen_xml_export(file_regrex, filename, export_type = 'html', heading_level = 0):
+    def doxygen_xml_export(file_regrex, filename, export_type = 'html', heading_level = 0, export_format = 'arch'):
         global base_dir
         base_dir = os.path.dirname(os.path.realpath(filename))
         with open(filename) as xml_file:
@@ -426,7 +468,9 @@ if __name__ == "__main__":
     @click.option('--export_type',
                   type=click.Choice(['html', 'latex'], case_sensitive=False), default='html')
     @click.option('--heading_level', default=2, help='Heading level', type=int)
-    def src_to_latex(file_regrex, filename, export_type, heading_level):
+    @click.option('--export_format',
+                  type=click.Choice(['arch', 'unit'], case_sensitive=False), default='arch')
+    def src_to_latex(file_regrex, filename, export_type, heading_level, export_format):
         """Convert source code to latex."""
         logging.basicConfig(format='%(levelname)s[%(filename)s:%(funcName)s():%(lineno)s]: %(message)s', level=logging.DEBUG)
 
@@ -456,7 +500,11 @@ GENERATE_XML = YES
                     print("Doxygen process failed with status {:d} --> {:s}" % (retcode, output))
                     exit (-1)
 
-                doxygen_xml_export(file_regrex, os.path.join(temp_dir, 'xml/index.xml'), export_type, heading_level)
+                if export_format == 'arch':
+                    heading_level = 3
+                if export_format == 'unit':
+                    heading_level = 2
+                doxygen_xml_export(file_regrex, os.path.join(temp_dir, 'xml/index.xml'), export_type, heading_level, export_format)
 
 
     src_to_latex()

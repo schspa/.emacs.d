@@ -104,13 +104,21 @@ Return nil if non match"
           (kill-buffer output-buffer)
           (error "Shell command failed.\nSTDOUT:\n%s\nSTDERR:\n%s" stdout stderr))))))
 
-(defcustom oorg-srclink-export-file-content nil
+(defcustom org-srclink-export-file-content nil
   "Enable xref integration."
   :type 'boolean
   :group 'org-link)
 
 (put 'org-srclink-export-file-content 'safe-local-variable #'booleanp)
 (make-variable-buffer-local 'org-srclink-export-file-content)
+
+(defcustom org-srclink-export-format nil
+  "Enable xref integration."
+  :type 'string
+  :group 'org-link)
+
+(put 'org-srclink-export-format 'safe-local-variable #'stringp)
+(make-variable-buffer-local 'org-srclink-export-format)
 
 (defun org-srclink-export-to (file-path export-type repo revision path line desc)
   "Export a file as latex"
@@ -120,7 +128,7 @@ Return nil if non match"
     (if org-srclink-export-file-content
         (progn
           (message (format "Export %s to %s" real-file-path export-type))
-          (run-shell-command-in-project-root-at-file-path (format "%s --export_type %s %s" (expand-file-name "bin/doxygen-source-export.py" user-emacs-directory) export-type relative-path) real-file-path)
+          (run-shell-command-in-project-root-at-file-path (format "%s --export_type %s --export_format %s %s" (expand-file-name "bin/doxygen-source-export.py" user-emacs-directory) export-type org-srclink-export-format relative-path) real-file-path)
           )
       (format (plist-get (org-srclink-get-repo-by-name repo) :html-link-fmt) revision path line desc)
       )))
