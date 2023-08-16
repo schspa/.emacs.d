@@ -137,7 +137,11 @@ class DoxygenFunction():
     def parse_single_param(self, param):
 
         param_dir = 'in'
-        param_detail = functools.reduce(lambda a, b: a+b, param['parameterdescription']['para'])
+        if param['parameterdescription'] is not None:
+            param_detail = functools.reduce(lambda a, b: a+b, param['parameterdescription']['para'])
+        else:
+            param_detail = 'NA'
+
         param_name = param['parameternamelist']['parametername']
 
         if isinstance(param_name, dict):
@@ -452,6 +456,8 @@ if __name__ == "__main__":
             for f in files:
                 if re.match(file_regrex, f['name']):
                     fo = BuildObjectFromKind(f)
+                    if fo is None:
+                        continue
                     ef = getattr(fo, 'to_' + export_type, None)
                     if ef is not None:
                         print(ef(heading_level))
