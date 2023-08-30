@@ -348,6 +348,8 @@ org-protocol://gdt?id=CBEC8DD1-7814-44A7-AA3D-97AEC35B6DB7"
   :config
   (add-hook 'org-mode-hook 'org-xournalpp-mode))
 
+(define-key global-map "\C-cl" 'org-store-link)
+
 (let ((ox-feishu-dir (expand-file-name "~/work/src/ox-feishu")))
   (if (file-accessible-directory-p ox-feishu-dir)
       (progn

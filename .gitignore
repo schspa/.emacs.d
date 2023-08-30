@@ -11,3 +11,4 @@ session.*
 transient/
 eln-cache/
 projects
+url/
