@@ -140,6 +140,7 @@
 (require 'setup-net)
 (require 'org-drawio)
 (require 'org-srclink)
+(require 'org-video)
 
 (org-srclink-set-parameters
  "atf"
