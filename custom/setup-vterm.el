@@ -23,8 +23,12 @@
 
 ;;; Code:
 
+(use-package use-package-ensure-system-package
+  :ensure t)
+
 (use-package vterm
   :commands vterm
+  :ensure-system-package libtool-bin
   :hook (vterm-mode
          . (lambda() (when (>= emacs-major-version 26)
                        (display-line-numbers-mode -1)))))
