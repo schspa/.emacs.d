@@ -196,10 +196,16 @@
 (setq-default org-preview-latex-image-directory (concat my-cache-dir "/org-latex"))
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
-(setq org-latex-pdf-process
-      '("latexmk -pdflatex='xelatex -interaction nonstopmode' -pdf -bibtex -f %f"))
-
-
+(add-to-list 'org-preview-latex-process-alist '(xdvsvgm :progams
+							                            ("xelatex" "dvisvgm")
+							                            :discription "xdv > svg"
+							                            :message "you need install the programs: xelatex and dvisvgm."
+							                            :image-input-type "xdv"
+							                            :image-output-type "svg"
+							                            :image-size-adjust (1.7 . 1.5)
+							                            :latex-compiler ("xelatex -interaction nonstopmode -no-pdf -output-directory %o %f")
+							                            :image-converter ("dvisvgm %f -n -b min -c %S -o %O")))
+(setq org-preview-latex-default-process 'xdvsvgm)
 
 (unless (boundp 'org-latex-classes)
   (setq org-latex-classes nil)
