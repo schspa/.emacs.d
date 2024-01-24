@@ -350,7 +350,7 @@ org-protocol://gdt?id=CBEC8DD1-7814-44A7-AA3D-97AEC35B6DB7"
   :ensure t
   :quelpa (org-xournalpp :fetcher gitlab :repo "vherrmann/org-xournalpp" :files ("*.el" "resources"))
   :custom
-  (org-xournalpp-image-type "png")
+  (org-xournalpp-image-type 'png)
   :config
   (add-hook 'org-mode-hook 'org-xournalpp-mode))
 
