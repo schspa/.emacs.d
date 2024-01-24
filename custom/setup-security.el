@@ -23,6 +23,7 @@
 
 ;;; Code:
 (setq auth-sources '("~/.authinfo.gpg"))
+;; -*- epa-file-encrypt-to: ("schspa@gmail.com") -*-
 (custom-set-variables
  '(nsm-settings-file (expand-file-name "network-security.data" my-cache-dir)))
 

@@ -32,7 +32,7 @@
 
 (scroll-bar-mode 0)
 
-
+(setq byte-compile-warnings nil)
 
 ;; Local Variables:
 ;; coding: utf-8
