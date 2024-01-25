@@ -23,7 +23,19 @@
 
 ;;; Code:
 (setq auth-sources '("~/.authinfo.gpg"))
+(require 'epg-config)
+;; (fset 'epg-wait-for-status 'ignore)
 ;; -*- epa-file-encrypt-to: ("schspa@gmail.com") -*-
+(setq epa-file-encrypt-to '("schspa@gmail.com"))
+
+;; https://www.reddit.com/r/emacs/comments/137r7j7/gnupg_241_encryption_issues_with_emacs_orgmode/
+;; https://dev.gnupg.org/T6481
+;; https://dev.gnupg.org/rG2f872fa68c6576724b9dabee9fb0844266f55d0d
+(setq epg-gpg-program "/opt/homebrew/opt/gnupg@2.2/bin/gpg")
+(setq epg-gpgsm-program "/opt/homebrew/opt/gnupg@2.2/bin/gpgsm")
+(setq epg-gpgconf-program "/opt/homebrew/opt/gnupg@2.2/bin/gpgconf")
+;; epg-gpg-home-directory
+
 (custom-set-variables
  '(nsm-settings-file (expand-file-name "network-security.data" my-cache-dir)))
 
