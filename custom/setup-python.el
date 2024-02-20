@@ -23,6 +23,8 @@
   :init (when (executable-find "python3")
           (setq lsp-pyright-python-executable-cmd "python3")))
 
+(add-to-list 'auto-mode-alist '("\\SConstruct\\'" . python-mode))
+
 ;; or lsp-deferred
 ;; (add-hook 'python-mode-hook
 ;;           (lambda ()
