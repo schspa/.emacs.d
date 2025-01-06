@@ -109,7 +109,12 @@
   (funcall orig-fun args))
 
 (use-package mu4e
-  :load-path "/usr/share/emacs/site-lisp/mu4e"
+  :ensure-system-package mu
+  :load-path (lambda ()
+               (let* ((mu-path (string-trim (shell-command-to-string "realpath $(which mu)")))
+                      (mu-dir (file-name-directory mu-path))
+                      (parent-dir (file-name-directory (directory-file-name mu-dir))))
+                 (expand-file-name "share/emacs/site-lisp/mu/mu4e" parent-dir)))
   :config
   (setq
    mu4e-get-mail-command "offlineimap"
