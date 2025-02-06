@@ -70,15 +70,12 @@
 (quelpa-use-package-activate-advice)
 
 (use-package sis
-  :quelpa
-  (sis :fetcher github
-       :repo "laishulu/emacs-smart-input-source")
   :if (not (getenv "SSH_CONNECTION"))
   :config
   (cond (sys/macp (sis-ism-lazyman-config
                    "com.apple.keylayout.ABC"
                    ;; https://github.com/rime/squirrel/commit/5b981dc0528fadfed36d7b2e456d23ab6229774e
-                   "im.rime.inputmethod.Squirrel.Hans"))
+                   "com.apple.inputmethod.SCIM.ITABC"))
         ((string-equal (getenv "GTK_IM_MODULE") "fcitx")
          (sis-ism-lazyman-config "1" "2" 'fcitx5))
         ((t (sis-ism-lazyman-config "xkb:us::eng" "rime" 'ibus))))
@@ -87,7 +84,8 @@
   (sis-global-cursor-color-mode t)
   (sis-global-respect-mode t)
   (sis-global-inline-mode t)
-  :bind (("C-\\" . sis-switch)))
+  :bind (("C-\\" . sis-switch)
+         ("C-\、" . sis-switch)))
 
 (use-package yasnippet
   :ensure t
