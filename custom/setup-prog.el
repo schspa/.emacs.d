@@ -43,6 +43,12 @@
 			 ;; show unncessary whitespace that can mess up your diff
 			 (setq show-trailing-whitespace 1)))
 
+(use-package json-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.jsonc\\'" . jsonc-mode))
+  )
+
 ;; setup GDB
 (setq-default
  ;; use gdb-many-windows by default
